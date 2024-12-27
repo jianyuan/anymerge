@@ -6,7 +6,7 @@ import anymerge._typing_utils as sut
 
 
 @pytest.mark.parametrize(
-    "annotation, expected",
+    ("annotation", "expected"),
     [
         (int, int),
         (str, str),

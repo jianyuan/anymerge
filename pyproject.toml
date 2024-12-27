@@ -5,9 +5,9 @@ build-backend = "hatchling.build"
 [project]
 name = "anymerge"
 dynamic = ["version"]
-description = 'A Python library for merging dataclasses, TypedDicts, and Pydantic models seamlessly.'
+description = "A Python library for merging dataclasses, TypedDicts, and Pydantic models seamlessly."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = "MIT"
 keywords = []
 authors = [{ name = "Jian Yuan Lee", email = "jianyuan@gmail.com" }]
@@ -15,8 +15,6 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -32,19 +30,8 @@ Documentation = "https://github.com/jianyuan/anymerge#readme"
 Issues = "https://github.com/jianyuan/anymerge/issues"
 Source = "https://github.com/jianyuan/anymerge"
 
-[project.optional-dependencies]
-dev = ["pytest", "ruff"]
-
 [tool.hatch.version]
 source = "vcs"
-
-[tool.hatch.envs.default]
-features = ["dev"]
-
-[tool.hatch.envs.default.scripts]
-check = "ruff check {args:src/anymerge tests}"
-format = "ruff format {args:src/anymerge tests}"
-test = "pytest {args:tests}"
 
 [tool.hatch.envs.types]
 extra-dependencies = ["mypy>=1.0.0"]
@@ -52,14 +39,23 @@ extra-dependencies = ["mypy>=1.0.0"]
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/anymerge tests}"
 
+[tool.hatch.envs.hatch-test]
+extra-args = ["-vv"]
+
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.13", "3.12", "3.11", "3.10"]
+
 [tool.coverage.run]
 source_pkgs = ["anymerge", "tests"]
 branch = true
 parallel = true
 
 [tool.coverage.paths]
-anymerge = ["src/anymerge", "*/anymerge/src/anymerge"]
-tests = ["tests", "*/anymerge/tests"]
+anymerge = ["src/anymerge"]
+tests = ["tests"]
 
 [tool.coverage.report]
 exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
+
+[tool.ruff.lint]
+ignore = ["UP006", "UP007"]
