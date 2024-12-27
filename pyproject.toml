@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
@@ -36,7 +36,7 @@ Source = "https://github.com/jianyuan/anymerge"
 dev = ["pytest", "ruff"]
 
 [tool.hatch.version]
-path = "src/anymerge/__about__.py"
+source = "vcs"
 
 [tool.hatch.envs.default]
 features = ["dev"]
@@ -56,7 +56,6 @@ check = "mypy --install-types --non-interactive {args:src/anymerge tests}"
 source_pkgs = ["anymerge", "tests"]
 branch = true
 parallel = true
-omit = ["src/anymerge/__about__.py"]
 
 [tool.coverage.paths]
 anymerge = ["src/anymerge", "*/anymerge/src/anymerge"]
