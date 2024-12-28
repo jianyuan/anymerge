@@ -8,8 +8,7 @@ import pytest
 
 import anymerge._merger as sut
 from anymerge._api import Reducer
-from anymerge.models import ReducerInfo
-from anymerge.reducers import replace
+from anymerge.models import FieldInfo, ReducerInfo
 
 # Dataclasses
 
@@ -44,14 +43,14 @@ class DataclassModel4(DataclassModel2):
 class DataclassModel5:
     """Dataclass with one field with deep reducer"""
 
-    a: typing.Annotated[DataclassModel2, Reducer(...)]
+    a: typing.Annotated[DataclassModel4, Reducer(...)]
 
 
 @dataclasses.dataclass
 class DataclassModel6:
     """Dataclass with one field with deep reducer"""
 
-    a: typing.Annotated[DataclassModel2, Reducer(deep=True)]
+    a: typing.Annotated[DataclassModel4, Reducer(deep=True)]
 
 
 # TypedDicts
@@ -82,13 +81,13 @@ class TypedDictModel4(TypedDictModel2):
 class TypedDictModel5(typing.TypedDict):
     """TypedDict with one field with deep reducer"""
 
-    a: typing.Annotated[TypedDictModel2, Reducer(...)]
+    a: typing.Annotated[TypedDictModel4, Reducer(...)]
 
 
 class TypedDictModel6(typing.TypedDict):
     """TypedDict with one field with deep reducer"""
 
-    a: typing.Annotated[TypedDictModel2, Reducer(deep=True)]
+    a: typing.Annotated[TypedDictModel4, Reducer(deep=True)]
 
 
 # Pydantic models
@@ -119,13 +118,13 @@ class PydanticModel4(PydanticModel2):
 class PydanticModel5(pydantic.BaseModel):
     """Pydantic model with one field with deep reducer"""
 
-    a: typing.Annotated[PydanticModel2, Reducer(...)]
+    a: typing.Annotated[PydanticModel4, Reducer(...)]
 
 
 class PydanticModel6(pydantic.BaseModel):
     """Pydantic model with one field with deep reducer"""
 
-    a: typing.Annotated[PydanticModel2, Reducer(deep=True)]
+    a: typing.Annotated[PydanticModel4, Reducer(deep=True)]
 
 
 # Pydantic V1 models
@@ -156,13 +155,13 @@ class PydanticV1Model4(PydanticV1Model2):
 class PydanticV1Model5(pydantic.v1.BaseModel):
     """Pydantic V1 model with one field with deep reducer"""
 
-    a: typing.Annotated[PydanticV1Model2, Reducer(...)]
+    a: typing.Annotated[PydanticV1Model4, Reducer(...)]
 
 
 class PydanticV1Model6(pydantic.v1.BaseModel):
     """Pydantic V1 model with one field with deep reducer"""
 
-    a: typing.Annotated[PydanticV1Model2, Reducer(deep=True)]
+    a: typing.Annotated[PydanticV1Model4, Reducer(deep=True)]
 
 
 @pytest.mark.parametrize(
@@ -173,32 +172,36 @@ class PydanticV1Model6(pydantic.v1.BaseModel):
         (
             DataclassModel2,
             {
-                "a": [ReducerInfo(replace)],
+                "a": FieldInfo(name="a", base_type=int, reducers=None),
             },
         ),
         (
             DataclassModel3,
             {
-                "a": [ReducerInfo(replace)],
-                "b": [ReducerInfo(replace)],
+                "a": FieldInfo(name="a", base_type=int, reducers=None),
+                "b": FieldInfo(name="b", base_type=str, reducers=None),
             },
         ),
         (
             DataclassModel4,
             {
-                "a": [ReducerInfo(operator.add)],
+                "a": FieldInfo(name="a", base_type=int, reducers=[ReducerInfo(operator.add)]),
             },
         ),
         (
             DataclassModel5,
             {
-                "a": [ReducerInfo(deep=True)],
+                "a": FieldInfo(
+                    name="a", base_type=DataclassModel4, reducers=[ReducerInfo(deep=True)]
+                ),
             },
         ),
         (
             DataclassModel6,
             {
-                "a": [ReducerInfo(deep=True)],
+                "a": FieldInfo(
+                    name="a", base_type=DataclassModel4, reducers=[ReducerInfo(deep=True)]
+                ),
             },
         ),
         (
@@ -208,32 +211,36 @@ class PydanticV1Model6(pydantic.v1.BaseModel):
         (
             TypedDictModel2,
             {
-                "a": [ReducerInfo(replace)],
+                "a": FieldInfo(name="a", base_type=int, reducers=None),
             },
         ),
         (
             TypedDictModel3,
             {
-                "a": [ReducerInfo(replace)],
-                "b": [ReducerInfo(replace)],
+                "a": FieldInfo(name="a", base_type=int, reducers=None),
+                "b": FieldInfo(name="b", base_type=str, reducers=None),
             },
         ),
         (
             TypedDictModel4,
             {
-                "a": [ReducerInfo(operator.add)],
+                "a": FieldInfo(name="a", base_type=int, reducers=[ReducerInfo(operator.add)]),
             },
         ),
         (
             TypedDictModel5,
             {
-                "a": [ReducerInfo(deep=True)],
+                "a": FieldInfo(
+                    name="a", base_type=TypedDictModel4, reducers=[ReducerInfo(deep=True)]
+                ),
             },
         ),
         (
             TypedDictModel6,
             {
-                "a": [ReducerInfo(deep=True)],
+                "a": FieldInfo(
+                    name="a", base_type=TypedDictModel4, reducers=[ReducerInfo(deep=True)]
+                ),
             },
         ),
         (
@@ -243,32 +250,36 @@ class PydanticV1Model6(pydantic.v1.BaseModel):
         (
             PydanticModel2,
             {
-                "a": [ReducerInfo(replace)],
+                "a": FieldInfo(name="a", base_type=int, reducers=None),
             },
         ),
         (
             PydanticModel3,
             {
-                "a": [ReducerInfo(replace)],
-                "b": [ReducerInfo(replace)],
+                "a": FieldInfo(name="a", base_type=int, reducers=None),
+                "b": FieldInfo(name="b", base_type=str, reducers=None),
             },
         ),
         (
             PydanticModel4,
             {
-                "a": [ReducerInfo(operator.add)],
+                "a": FieldInfo(name="a", base_type=int, reducers=[ReducerInfo(operator.add)]),
             },
         ),
         (
             PydanticModel5,
             {
-                "a": [ReducerInfo(deep=True)],
+                "a": FieldInfo(
+                    name="a", base_type=PydanticModel4, reducers=[ReducerInfo(deep=True)]
+                ),
             },
         ),
         (
             PydanticModel6,
             {
-                "a": [ReducerInfo(deep=True)],
+                "a": FieldInfo(
+                    name="a", base_type=PydanticModel4, reducers=[ReducerInfo(deep=True)]
+                ),
             },
         ),
         (
@@ -278,41 +289,45 @@ class PydanticV1Model6(pydantic.v1.BaseModel):
         (
             PydanticV1Model2,
             {
-                "a": [ReducerInfo(replace)],
+                "a": FieldInfo(name="a", base_type=int, reducers=None),
             },
         ),
         (
             PydanticV1Model3,
             {
-                "a": [ReducerInfo(replace)],
-                "b": [ReducerInfo(replace)],
+                "a": FieldInfo(name="a", base_type=int, reducers=None),
+                "b": FieldInfo(name="b", base_type=str, reducers=None),
             },
         ),
         (
             PydanticV1Model4,
             {
-                "a": [ReducerInfo(operator.add)],
+                "a": FieldInfo(name="a", base_type=int, reducers=[ReducerInfo(operator.add)]),
             },
         ),
         (
             PydanticV1Model5,
             {
-                "a": [ReducerInfo(deep=True)],
+                "a": FieldInfo(
+                    name="a", base_type=PydanticV1Model4, reducers=[ReducerInfo(deep=True)]
+                ),
             },
         ),
         (
             PydanticV1Model6,
             {
-                "a": [ReducerInfo(deep=True)],
+                "a": FieldInfo(
+                    name="a", base_type=PydanticV1Model4, reducers=[ReducerInfo(deep=True)]
+                ),
             },
         ),
     ],
 )
-def test_collect_reducers(
+def test_collect_fields(
     value: typing.Any,
-    expected: list[ReducerInfo],
+    expected: dict[str, FieldInfo],
 ):
-    assert sut.collect_reducers(value) == expected
+    assert sut.collect_fields(value) == expected
 
 
 @pytest.mark.parametrize(
@@ -321,9 +336,33 @@ def test_collect_reducers(
         (DataclassModel2(a=1), DataclassModel2(a=2), DataclassModel2(a=2)),
         (DataclassModel3(a=1, b="a"), DataclassModel3(a=2, b="b"), DataclassModel3(a=2, b="b")),
         (DataclassModel4(a=1), DataclassModel4(a=1), DataclassModel4(a=2)),
-        # TODO: deep merge
+        (
+            DataclassModel6(a=DataclassModel4(a=1)),
+            DataclassModel6(a=DataclassModel4(a=1)),
+            DataclassModel6(a=DataclassModel4(a=2)),
+        ),
+        (PydanticModel2(a=1), PydanticModel2(a=2), PydanticModel2(a=2)),
+        (PydanticModel3(a=1, b="a"), PydanticModel3(a=2, b="b"), PydanticModel3(a=2, b="b")),
+        (PydanticModel4(a=1), PydanticModel4(a=1), PydanticModel4(a=2)),
+        (
+            PydanticModel6(a=PydanticModel4(a=1)),
+            PydanticModel6(a=PydanticModel4(a=1)),
+            PydanticModel6(a=PydanticModel4(a=2)),
+        ),
+        (PydanticV1Model2(a=1), PydanticV1Model2(a=2), PydanticV1Model2(a=2)),
+        (
+            PydanticV1Model3(a=1, b="a"),
+            PydanticV1Model3(a=2, b="b"),
+            PydanticV1Model3(a=2, b="b"),
+        ),
+        (PydanticV1Model4(a=1), PydanticV1Model4(a=1), PydanticV1Model4(a=2)),
+        (
+            PydanticV1Model6(a=PydanticV1Model4(a=1)),
+            PydanticV1Model6(a=PydanticV1Model4(a=1)),
+            PydanticV1Model6(a=PydanticV1Model4(a=2)),
+        ),
     ],
 )
-def test_merge_dataclass(a: typing.Any, b: typing.Any, expected: typing.Any):
+def test_merge(a: typing.Any, b: typing.Any, expected: typing.Any):
     result = sut.merge(a, b)
     assert result == expected

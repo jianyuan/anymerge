@@ -29,4 +29,4 @@ def extract_reducer(
         _base_type, *metadata = typing.get_args(annotation)
         result = [data for data in metadata if isinstance(data, ReducerInfo)]
 
-    return result
+    return result or None

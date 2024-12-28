@@ -23,3 +23,10 @@ class ReducerInfo:
 
 
 DEFAULT_REDUCER = ReducerInfo(replace, deep=False)
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
+class FieldInfo:
+    name: str
+    base_type: type[typing.Any] | list[type[typing.Any]]
+    reducers: list[ReducerInfo] | None

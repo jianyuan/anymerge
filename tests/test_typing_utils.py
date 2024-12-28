@@ -33,9 +33,9 @@ def test_get_base_type(
 @pytest.mark.parametrize(
     ("annotation", "expected"),
     [
-        (int, []),
-        (str, []),
-        (None, []),
+        (int, None),
+        (str, None),
+        (None, None),
         (typing.Annotated[int, ReducerInfo(operator.add)], [ReducerInfo(operator.add)]),
         (
             typing.Annotated[int, ReducerInfo(operator.add), ReducerInfo(operator.mul)],
