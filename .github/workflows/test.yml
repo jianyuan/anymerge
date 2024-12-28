@@ -38,5 +38,8 @@ jobs:
       - name: Run static analysis
         run: hatch fmt --check
 
+      - name: Run type checks
+        run: hatch run types:check
+
       - name: Run tests
         run: hatch test --python ${{ matrix.python-version }} --cover --parallel

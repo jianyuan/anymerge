@@ -26,7 +26,7 @@ from anymerge.models import ReducerInfo
 def test_get_base_type(
     annotation: typing.Any,
     expected: typing.Any | list[typing.Any],
-) -> None:
+):
     assert sut.get_base_type(annotation) == expected
 
 
@@ -46,5 +46,5 @@ def test_get_base_type(
 def test_extract_reducer(
     annotation: typing.Any,
     expected: typing.Any | None,
-) -> None:
+):
     assert sut.extract_reducer(annotation) == expected

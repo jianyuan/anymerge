@@ -76,7 +76,7 @@ class TypedDictModel3(TypedDictModel2):
 class TypedDictModel4(TypedDictModel2):
     """TypedDict with one overridden field"""
 
-    a: typing.Annotated[int, Reducer(operator.add)]
+    a: typing.Annotated[int, Reducer(operator.add)]  # type: ignore[misc]
 
 
 class TypedDictModel5(typing.TypedDict):
