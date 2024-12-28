@@ -8,6 +8,8 @@ from anymerge._typing_utils import extract_reducer
 from anymerge.errors import AnyMergeTypeError
 from anymerge.models import DEFAULT_REDUCER, Reducer
 
+T = typing.TypeVar("T")
+
 
 def collect_reducers(
     class_: typing.Any,
@@ -43,5 +45,5 @@ def collect_reducers(
     raise AnyMergeTypeError(class_)
 
 
-def merge(_a: typing.Any, _b: typing.Any) -> typing.Any:
-    pass
+def merge(_a: T, _b: typing.Any) -> T:
+    raise NotImplementedError
