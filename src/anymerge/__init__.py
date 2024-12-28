@@ -1,3 +1,3 @@
-from anymerge._models import Reducer
+from anymerge.models import Reducer
 
 __all__ = ["Reducer"]

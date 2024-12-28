@@ -23,7 +23,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
   "Typing :: Typed",
 ]
-dependencies = []
+dependencies = ["pydantic>=2"]
 
 [project.urls]
 Documentation = "https://github.com/jianyuan/anymerge#readme"
@@ -56,3 +56,6 @@ tests = ["tests"]
 
 [tool.coverage.report]
 exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
+
+[tool.ruff]
+line-length = 100

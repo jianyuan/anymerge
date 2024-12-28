@@ -4,7 +4,7 @@ import typing
 import pytest
 
 import anymerge._typing_utils as sut
-from anymerge._models import Reducer
+from anymerge.models import Reducer
 
 
 @pytest.mark.parametrize(

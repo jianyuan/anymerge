@@ -3,7 +3,7 @@ from __future__ import annotations
 import types
 import typing
 
-from anymerge import _models
+from anymerge.models import Reducer
 
 
 def get_base_type(
@@ -22,8 +22,11 @@ def get_base_type(
 
 def extract_reducer(
     annotation: typing.Any,
-) -> list[_models.Reducer[typing.Any, typing.Any]]:
+) -> list[Reducer[typing.Any, typing.Any]] | None:
+    result: list[Reducer[typing.Any, typing.Any]] = []
+
     if typing.get_origin(annotation) is typing.Annotated:
         _base_type, *metadata = typing.get_args(annotation)
-        return [data for data in metadata if isinstance(data, _models.Reducer)]
-    return []
+        result = [data for data in metadata if isinstance(data, Reducer)]
+
+    return result
