@@ -4,9 +4,9 @@ import typing
 import pydantic
 import pydantic.v1
 
-from anymerge._models import DEFAULT_REDUCER, ReducerInfo
 from anymerge._typing_utils import extract_reducer
 from anymerge.errors import AnyMergeTypeError
+from anymerge.models import DEFAULT_REDUCER, ReducerInfo
 
 T = typing.TypeVar("T")
 

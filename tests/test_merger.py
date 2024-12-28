@@ -8,7 +8,7 @@ import pytest
 
 import anymerge._merger as sut
 from anymerge._api import Reducer
-from anymerge._models import ReducerInfo
+from anymerge.models import ReducerInfo
 from anymerge.reducers import replace
 
 # Dataclasses

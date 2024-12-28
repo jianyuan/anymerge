@@ -3,7 +3,7 @@ from __future__ import annotations
 import types
 import typing
 
-from anymerge._models import ReducerInfo
+from anymerge.models import ReducerInfo
 
 
 def get_base_type(
