@@ -4,7 +4,7 @@ import typing
 import pytest
 
 import anymerge._typing_utils as sut
-from anymerge.models import Reducer
+from anymerge._models import ReducerInfo
 
 
 @pytest.mark.parametrize(
@@ -36,10 +36,10 @@ def test_get_base_type(
         (int, []),
         (str, []),
         (None, []),
-        (typing.Annotated[int, Reducer(operator.add)], [Reducer(operator.add)]),
+        (typing.Annotated[int, ReducerInfo(operator.add)], [ReducerInfo(operator.add)]),
         (
-            typing.Annotated[int, Reducer(operator.add), Reducer(operator.mul)],
-            [Reducer(operator.add), Reducer(operator.mul)],
+            typing.Annotated[int, ReducerInfo(operator.add), ReducerInfo(operator.mul)],
+            [ReducerInfo(operator.add), ReducerInfo(operator.mul)],
         ),
     ],
 )

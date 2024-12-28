@@ -1,11 +1,10 @@
-import dataclasses
-import typing
-
-
-class AnyMergeTypeError(TypeError):
+class AnyMergeError(Exception):
     pass
 
 
-@dataclasses.dataclass(frozen=True, slots=True)
-class AnyMergeUnsupportedClassError(AnyMergeTypeError):
-    class_: type[typing.Any]
+class AnyMergeTypeError(TypeError, AnyMergeError):
+    pass
+
+
+class AnyMergeValueError(ValueError, AnyMergeError):
+    pass
