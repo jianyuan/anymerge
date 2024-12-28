@@ -2,7 +2,7 @@ import types
 import typing
 
 from anymerge import models
-from anymerge.errors import AnyMergeValueError
+from anymerge.exceptions import AnyMergeValueError
 from anymerge.types import ReducerCallable
 
 
