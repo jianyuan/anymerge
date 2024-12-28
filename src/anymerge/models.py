@@ -1,4 +1,5 @@
 import dataclasses
+import typing
 
 from anymerge.exceptions import AnyMergeValueError
 from anymerge.reducers import replace
@@ -14,6 +15,11 @@ class ReducerInfo:
         if self.reducer is not None and self.deep:
             msg = "deep cannot be True when reducer is provided"
             raise AnyMergeValueError(msg)
+
+    def __call__(self, a: typing.Any, b: typing.Any) -> typing.Any:
+        if self.reducer is None:
+            return b
+        return self.reducer(a, b)
 
 
 DEFAULT_REDUCER = ReducerInfo(replace, deep=False)

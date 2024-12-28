@@ -313,3 +313,17 @@ def test_collect_reducers(
     expected: list[ReducerInfo],
 ):
     assert sut.collect_reducers(value) == expected
+
+
+@pytest.mark.parametrize(
+    ("a", "b", "expected"),
+    [
+        (DataclassModel2(a=1), DataclassModel2(a=2), DataclassModel2(a=2)),
+        (DataclassModel3(a=1, b="a"), DataclassModel3(a=2, b="b"), DataclassModel3(a=2, b="b")),
+        (DataclassModel4(a=1), DataclassModel4(a=1), DataclassModel4(a=2)),
+        # TODO: deep merge
+    ],
+)
+def test_merge_dataclass(a: typing.Any, b: typing.Any, expected: typing.Any):
+    result = sut.merge(a, b)
+    assert result == expected
