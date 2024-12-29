@@ -8,8 +8,13 @@ from anymerge.types import ReducerCallable
 
 @dataclasses.dataclass(frozen=True, slots=True)
 class ReducerInfo:
+    """Information about a reducer to apply to a field."""
+
     reducer: ReducerCallable | None = None
+    """The reducer callable to apply to the field."""
+
     deep: bool = dataclasses.field(default=False, kw_only=True)
+    """Whether to apply the reducer deeply."""
 
     def __post_init__(self) -> None:
         if self.reducer is not None and self.deep:
@@ -27,6 +32,13 @@ DEFAULT_REDUCER = ReducerInfo(replace, deep=False)
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class FieldInfo:
+    """Information about a field in a data model."""
+
     name: str
+    """The name of the field."""
+
     base_type: type[typing.Any] | list[type[typing.Any]]
+    """The base type of the field with annotations removed."""
+
     reducers: list[ReducerInfo] | None
+    """A list of information about reducers to apply to the field."""

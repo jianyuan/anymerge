@@ -103,6 +103,17 @@ def merge(
     *,
     default_reducer: ReducerInfo = DEFAULT_REDUCER,
 ) -> T:
+    """
+    Merge two instances of data models.
+
+    Args:
+        a: The first instance to merge. This should contain all the annotations with the reducer information.
+        b: The second instance to merge.
+        default_reducer: The default reducer to apply to fields.
+
+    Returns:
+        The merged instance.
+    """
     fields = collect_fields(a)
     a_values = collect_values(a)
     b_values = collect_values(b)

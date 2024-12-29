@@ -1,4 +1,5 @@
 site_name: anymerge
+site_url: https://anymerge.jianyuan.io/
 repo_url: https://github.com/jianyuan/anymerge
 watch:
   - docs
@@ -48,6 +49,7 @@ extra:
 
 plugins:
   - search
+  - autorefs
   - gen-files:
       scripts:
         - docs/gen_ref_pages.py
@@ -70,17 +72,23 @@ plugins:
             # Signatures
             show_signature_annotations: true
             separate_signature: true
+            line_length: 60
             signature_crossrefs: true
             unwrap_annotated: true
 
 markdown_extensions:
+  - attr_list
   - pymdownx.highlight:
+      default_lang: python
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
+  - pymdownx.magiclink
   - pymdownx.snippets
   - pymdownx.superfences
+  - toc:
+      permalink: true
 
 nav:
   - anymerge: index.md

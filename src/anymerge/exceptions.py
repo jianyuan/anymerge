@@ -1,10 +1,10 @@
 class AnyMergeError(Exception):
-    pass
+    """Base class for all AnyMerge exceptions."""
 
 
 class AnyMergeTypeError(TypeError, AnyMergeError):
-    pass
+    """Raised when an invalid type is encountered."""
 
 
 class AnyMergeValueError(ValueError, AnyMergeError):
-    pass
+    """Raised when an invalid value is encountered."""

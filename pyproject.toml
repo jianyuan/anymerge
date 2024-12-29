@@ -41,16 +41,19 @@ check = "mypy --install-types --non-interactive {args:src/anymerge tests}"
 
 [tool.hatch.envs.docs]
 dependencies = [
+  "mkdocs-autorefs",
   "mkdocs-gen-files",
   "mkdocs-literate-nav",
   "mkdocs-material",
   "mkdocs-section-index",
   "mkdocstrings-python",
+  "ruff",
 ]
 
 [tool.hatch.envs.docs.scripts]
-serve = "mkdocs serve"
-deploy = "mkdocs deploy"
+build = "mkdocs build --clean --strict"
+serve = "mkdocs serve --dev-addr localhost:8000"
+deploy = "mkdocs gh-deploy --clean --strict --force"
 
 [tool.hatch.envs.hatch-test]
 extra-args = ["-vv"]
@@ -72,6 +75,7 @@ exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [tool.ruff]
 line-length = 100
+extend-exclude = ["docs"]
 
 [tool.ruff.lint]
 ignore = ["FBT001", "SIM108"]
