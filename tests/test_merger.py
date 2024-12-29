@@ -366,3 +366,25 @@ def test_collect_fields(
 def test_merge(a: typing.Any, b: typing.Any, expected: typing.Any):
     result = sut.merge(a, b)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "a",
+    [
+        pytest.param(DataclassModel4(a=1), id="dataclass"),
+        pytest.param(PydanticModel4(a=1), id="pydantic"),
+        pytest.param(PydanticV1Model4(a=1), id="pydantic_v1"),
+    ],
+)
+@pytest.mark.parametrize(
+    "b",
+    [
+        pytest.param(DataclassModel4(a=1), id="dataclass"),
+        pytest.param(PydanticModel4(a=1), id="pydantic"),
+        pytest.param(PydanticV1Model4(a=1), id="pydantic_v1"),
+    ],
+)
+def test_merge_mixed(a: typing.Any, b: typing.Any):
+    cls = type(a)  # type: ignore
+    result = sut.merge(a, b)
+    assert result == cls(a=2)
