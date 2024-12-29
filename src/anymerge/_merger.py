@@ -1,8 +1,6 @@
-import dataclasses
 import typing
 
-from anymerge import _predicates
-from anymerge._typing_utils import extract_reducer, get_base_type
+from anymerge.adapters import ADAPTERS
 from anymerge.exceptions import AnyMergeTypeError
 from anymerge.models import DEFAULT_REDUCER, FieldInfo, ReducerInfo
 
@@ -10,72 +8,21 @@ T = typing.TypeVar("T")
 
 
 # TODO: Cache the results of this function
-def collect_fields(
-    cls_or_instance: typing.Any,
-) -> dict[str, FieldInfo]:
-    if _predicates.is_dataclass(cls_or_instance):
-        return {
-            field.name: FieldInfo(
-                name=field.name,
-                base_type=get_base_type(field.type),
-                reducers=extract_reducer(field.type),
-            )
-            for field in dataclasses.fields(cls_or_instance)
-        }
+def collect_fields(value: typing.Any) -> dict[str, FieldInfo]:
+    for adapter_cls in ADAPTERS:
+        if adapter_cls.is_supported_type(value):
+            return adapter_cls(value).get_fields()
 
-    if _predicates.is_typeddict(cls_or_instance):
-        type_hints = typing.get_type_hints(cls_or_instance, include_extras=True)
-        return {
-            field_name: FieldInfo(
-                name=field_name,
-                base_type=get_base_type(field),
-                reducers=extract_reducer(field),
-            )
-            for field_name, field in type_hints.items()
-        }
-
-    if _predicates.is_pydantic(cls_or_instance):
-        return {
-            field_name: FieldInfo(
-                name=field_name,
-                base_type=get_base_type(field.annotation),
-                reducers=(
-                    [data for data in field.metadata if isinstance(data, ReducerInfo)] or None
-                ),
-            )
-            for field_name, field in cls_or_instance.__pydantic_fields__.items()
-        }
-
-    if _predicates.is_pydantic_v1(cls_or_instance):
-        return {
-            field_name: FieldInfo(
-                name=field_name,
-                base_type=get_base_type(field.annotation),
-                reducers=extract_reducer(field.annotation) or None,
-            )
-            for field_name, field in cls_or_instance.__fields__.items()
-        }
-
-    msg = f"Unsupported class type: {cls_or_instance}"
+    msg = f"Unsupported class type: {value}"
     raise AnyMergeTypeError(msg)
 
 
-def collect_values(
-    instance: typing.Any,
-) -> dict[str, typing.Any]:
-    if _predicates.is_dataclass(instance):
-        return vars(instance)
+def collect_values(value: typing.Any) -> dict[str, typing.Any]:
+    for adapter_cls in ADAPTERS:
+        if adapter_cls.is_supported_type(value):
+            return adapter_cls(value).get_values(value)
 
-    if _predicates.is_typeddict(instance):
-        return instance
-
-    if _predicates.is_pydantic(instance):
-        return dict(instance)
-
-    if _predicates.is_pydantic_v1(instance):
-        return dict(instance)
-
-    msg = f"Unsupported instance type: {instance}"
+    msg = f"Unsupported instance type: {value}"
     raise AnyMergeTypeError(msg)
 
 
@@ -128,16 +75,9 @@ def merge(
         if key in fields
     }
 
-    if _predicates.is_dataclass(a):
-        return typing.cast(T, dataclasses.replace(a, **changes))
-
-    # TODO: Implement TypedDict support
-
-    if _predicates.is_pydantic(a):
-        return typing.cast(T, a.model_copy(update=changes))
-
-    if _predicates.is_pydantic_v1(a):
-        return typing.cast(T, a.copy(update=changes))
+    for adapter_cls in ADAPTERS:
+        if adapter_cls.is_supported_type(a):
+            return adapter_cls(a).copy(a, changes=changes)
 
     msg = f"Unsupported instance type: {a}"
     raise NotImplementedError(msg)
