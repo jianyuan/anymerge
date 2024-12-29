@@ -6,11 +6,9 @@ import typing
 from anymerge.models import ReducerInfo
 
 
-def get_base_type(
-    annotation: typing.Any,
-) -> typing.Any | list[typing.Any]:
+def get_base_type(annotation: typing.Any) -> typing.Any | list[typing.Any]:
     origin = typing.get_origin(annotation)
-    if origin is typing.Annotated:
+    if origin in [typing.Annotated, typing.Required, typing.NotRequired]:
         base_type, *_metadata = typing.get_args(annotation)
         return get_base_type(base_type)
 
@@ -20,9 +18,7 @@ def get_base_type(
     return annotation
 
 
-def extract_reducer(
-    annotation: typing.Any,
-) -> list[ReducerInfo] | None:
+def extract_reducer(annotation: typing.Any) -> list[ReducerInfo] | None:
     result: list[ReducerInfo] = []
 
     if typing.get_origin(annotation) is typing.Annotated:
