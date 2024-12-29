@@ -1,0 +1,87 @@
+site_name: anymerge
+repo_url: https://github.com/jianyuan/anymerge
+watch:
+  - docs
+  - src
+  - mkdocs.yml
+
+theme:
+  name: material
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - navigation.footer
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: deep purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  font:
+    text: Geist
+    code: Geist Mono
+
+extra:
+  social: []
+
+plugins:
+  - search
+  - gen-files:
+      scripts:
+        - docs/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            # Headings
+            show_root_heading: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            # Members
+            members_order: source
+            # Docstrings
+            docstring_section_style: spacy
+            merge_init_into_class: true
+            # Signatures
+            show_signature_annotations: true
+            separate_signature: true
+            signature_crossrefs: true
+            unwrap_annotated: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+nav:
+  - anymerge: index.md
+  - API Reference: reference/

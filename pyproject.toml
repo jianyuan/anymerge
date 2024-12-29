@@ -39,6 +39,19 @@ extra-dependencies = ["mypy>=1.0.0", "pydantic>=2", "pytest"]
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/anymerge tests}"
 
+[tool.hatch.envs.docs]
+dependencies = [
+  "mkdocs-gen-files",
+  "mkdocs-literate-nav",
+  "mkdocs-material",
+  "mkdocs-section-index",
+  "mkdocstrings-python",
+]
+
+[tool.hatch.envs.docs.scripts]
+serve = "mkdocs serve"
+deploy = "mkdocs deploy"
+
 [tool.hatch.envs.hatch-test]
 extra-args = ["-vv"]
 
