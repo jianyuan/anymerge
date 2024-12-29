@@ -134,10 +134,10 @@ def merge(
     # TODO: Implement TypedDict support
 
     if _predicates.is_pydantic(a):
-        return a.model_copy(update=changes)
+        return typing.cast(T, a.model_copy(update=changes))
 
     if _predicates.is_pydantic_v1(a):
-        return a.copy(update=changes)
+        return typing.cast(T, a.copy(update=changes))
 
     msg = f"Unsupported instance type: {a}"
     raise NotImplementedError(msg)
