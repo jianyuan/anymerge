@@ -1,6 +1,6 @@
 import typing
 
-from anymerge.adapters.utils import maybe_adapt_value
+from anymerge.adapters._utils import maybe_adapt_value
 from anymerge.models import DEFAULT_REDUCER, FieldInfo, ReducerInfo
 
 T = typing.TypeVar("T")
