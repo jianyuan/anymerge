@@ -2,6 +2,7 @@ import operator
 import typing
 
 import pytest
+import typing_extensions
 
 import anymerge._typing_utils as sut
 from anymerge.models import ReducerInfo
@@ -15,13 +16,13 @@ from anymerge.models import ReducerInfo
         (str, str),
         (list[int], list[int]),
         (dict[str, int], dict[str, int]),
-        (typing.Required[int], int),
-        (typing.NotRequired[int], int),
+        (typing_extensions.Required[int], int),
+        (typing_extensions.NotRequired[int], int),
         (typing.Annotated[int, "metadata"], int),
         (typing.Annotated[list[int], "metadata"], list[int]),
         (typing.Annotated[int | str, "metadata"], [int, str]),
         (typing.Annotated[typing.Union[int | str], "metadata"], [int, str]),  # noqa: UP007
-        (typing.Required[typing.Annotated[int, "metadata"]], int),
+        (typing_extensions.Required[typing.Annotated[int, "metadata"]], int),
         (int | str, [int, str]),
         (typing.Union[int, str], [int, str]),  # noqa: UP007
     ],

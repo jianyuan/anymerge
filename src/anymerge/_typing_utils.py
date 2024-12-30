@@ -3,12 +3,14 @@ from __future__ import annotations
 import types
 import typing
 
+import typing_extensions
+
 from anymerge.models import ReducerInfo
 
 
 def get_base_type(annotation: typing.Any) -> typing.Any | list[typing.Any]:
     origin = typing.get_origin(annotation)
-    if origin in [typing.Annotated, typing.Required, typing.NotRequired]:
+    if origin in [typing.Annotated, typing_extensions.Required, typing_extensions.NotRequired]:
         base_type, *_metadata = typing.get_args(annotation)
         return get_base_type(base_type)
 
