@@ -4,7 +4,7 @@ from anymerge._typing_utils import extract_reducer, get_base_type
 from anymerge.adapters.base_adapter import BaseAdapter
 from anymerge.models import FieldInfo
 
-T = typing.TypeVar("T", bound=dict[typing.Any, typing.Any])
+T = typing.TypeVar("T", bound=typing.Mapping[typing.Any, typing.Any])
 
 
 class TypedDictAdapter(BaseAdapter[T], typing.Generic[T]):
@@ -24,7 +24,7 @@ class TypedDictAdapter(BaseAdapter[T], typing.Generic[T]):
         }
 
     def get_values(self, value: T) -> dict[typing.Any, typing.Any]:
-        return value
+        return dict(value)
 
     def copy(self, value: T, *, changes: dict[typing.Any, typing.Any]) -> T:
         return typing.cast(T, {**value, **changes})

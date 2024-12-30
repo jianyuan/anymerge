@@ -1,29 +1,9 @@
 import typing
 
-from anymerge.adapters import ADAPTERS
-from anymerge.exceptions import AnyMergeTypeError
+from anymerge.adapters.utils import maybe_adapt_value
 from anymerge.models import DEFAULT_REDUCER, FieldInfo, ReducerInfo
 
 T = typing.TypeVar("T")
-
-
-# TODO: Cache the results of this function
-def collect_fields(value: typing.Any) -> dict[str, FieldInfo]:
-    for adapter_cls in ADAPTERS:
-        if adapter_cls.is_supported_type(value):
-            return adapter_cls(value).get_fields()
-
-    msg = f"Unsupported class type: {value}"
-    raise AnyMergeTypeError(msg)
-
-
-def collect_values(value: typing.Any) -> dict[str, typing.Any]:
-    for adapter_cls in ADAPTERS:
-        if adapter_cls.is_supported_type(value):
-            return adapter_cls(value).get_values(value)
-
-    msg = f"Unsupported instance type: {value}"
-    raise AnyMergeTypeError(msg)
 
 
 def apply_reducers(
@@ -61,9 +41,11 @@ def merge(
     Returns:
         The merged instance.
     """
-    fields = collect_fields(a)
-    a_values = collect_values(a)
-    b_values = collect_values(b)
+    adapted_a = maybe_adapt_value(a)
+    adapted_b = maybe_adapt_value(b)
+    fields = adapted_a.adapter.get_fields()
+    a_values = adapted_a.get_values()
+    b_values = adapted_b.get_values()
     changes = {
         key: apply_reducers(
             a_values[key],
@@ -75,9 +57,4 @@ def merge(
         if key in fields
     }
 
-    for adapter_cls in ADAPTERS:
-        if adapter_cls.is_supported_type(a):
-            return adapter_cls(a).copy(a, changes=changes)
-
-    msg = f"Unsupported instance type: {a}"
-    raise NotImplementedError(msg)
+    return adapted_a.copy(changes=changes)

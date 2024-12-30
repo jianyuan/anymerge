@@ -8,7 +8,7 @@ import pytest
 
 import anymerge._merger as sut
 from anymerge._api import Reducer
-from anymerge.models import FieldInfo, ReducerInfo
+from anymerge.adapters.typeddict_adapter import TypedDictAdapter
 
 # Dataclasses
 
@@ -165,172 +165,6 @@ class PydanticV1Model6(pydantic.v1.BaseModel):
 
 
 @pytest.mark.parametrize(
-    ("value", "expected"),
-    [
-        pytest.param(int, {}, marks=pytest.mark.xfail),
-        (DataclassModel1, {}),
-        (
-            DataclassModel2,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=None),
-            },
-        ),
-        (
-            DataclassModel3,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=None),
-                "b": FieldInfo(name="b", base_type=str, reducers=None),
-            },
-        ),
-        (
-            DataclassModel4,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=[ReducerInfo(operator.add)]),
-            },
-        ),
-        (
-            DataclassModel5,
-            {
-                "a": FieldInfo(
-                    name="a", base_type=DataclassModel4, reducers=[ReducerInfo(deep=True)]
-                ),
-            },
-        ),
-        (
-            DataclassModel6,
-            {
-                "a": FieldInfo(
-                    name="a", base_type=DataclassModel4, reducers=[ReducerInfo(deep=True)]
-                ),
-            },
-        ),
-        (
-            TypedDictModel1,
-            {},
-        ),
-        (
-            TypedDictModel2,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=None),
-            },
-        ),
-        (
-            TypedDictModel3,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=None),
-                "b": FieldInfo(name="b", base_type=str, reducers=None),
-            },
-        ),
-        (
-            TypedDictModel4,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=[ReducerInfo(operator.add)]),
-            },
-        ),
-        (
-            TypedDictModel5,
-            {
-                "a": FieldInfo(
-                    name="a", base_type=TypedDictModel4, reducers=[ReducerInfo(deep=True)]
-                ),
-            },
-        ),
-        (
-            TypedDictModel6,
-            {
-                "a": FieldInfo(
-                    name="a", base_type=TypedDictModel4, reducers=[ReducerInfo(deep=True)]
-                ),
-            },
-        ),
-        (
-            PydanticModel1,
-            {},
-        ),
-        (
-            PydanticModel2,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=None),
-            },
-        ),
-        (
-            PydanticModel3,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=None),
-                "b": FieldInfo(name="b", base_type=str, reducers=None),
-            },
-        ),
-        (
-            PydanticModel4,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=[ReducerInfo(operator.add)]),
-            },
-        ),
-        (
-            PydanticModel5,
-            {
-                "a": FieldInfo(
-                    name="a", base_type=PydanticModel4, reducers=[ReducerInfo(deep=True)]
-                ),
-            },
-        ),
-        (
-            PydanticModel6,
-            {
-                "a": FieldInfo(
-                    name="a", base_type=PydanticModel4, reducers=[ReducerInfo(deep=True)]
-                ),
-            },
-        ),
-        (
-            PydanticV1Model1,
-            {},
-        ),
-        (
-            PydanticV1Model2,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=None),
-            },
-        ),
-        (
-            PydanticV1Model3,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=None),
-                "b": FieldInfo(name="b", base_type=str, reducers=None),
-            },
-        ),
-        (
-            PydanticV1Model4,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=[ReducerInfo(operator.add)]),
-            },
-        ),
-        (
-            PydanticV1Model5,
-            {
-                "a": FieldInfo(
-                    name="a", base_type=PydanticV1Model4, reducers=[ReducerInfo(deep=True)]
-                ),
-            },
-        ),
-        (
-            PydanticV1Model6,
-            {
-                "a": FieldInfo(
-                    name="a", base_type=PydanticV1Model4, reducers=[ReducerInfo(deep=True)]
-                ),
-            },
-        ),
-    ],
-)
-def test_collect_fields(
-    value: typing.Any,
-    expected: dict[str, FieldInfo],
-):
-    assert sut.collect_fields(value) == expected
-
-
-@pytest.mark.parametrize(
     ("a", "b", "expected"),
     [
         (DataclassModel2(a=1), DataclassModel2(a=2), DataclassModel2(a=2)),
@@ -369,22 +203,27 @@ def test_merge(a: typing.Any, b: typing.Any, expected: typing.Any):
 
 
 @pytest.mark.parametrize(
-    "a",
+    ("a", "expected"),
     [
-        pytest.param(DataclassModel4(a=1), id="dataclass"),
-        pytest.param(PydanticModel4(a=1), id="pydantic"),
-        pytest.param(PydanticV1Model4(a=1), id="pydantic_v1"),
+        pytest.param(DataclassModel4(a=1), DataclassModel4(a=2), id="dataclass"),
+        pytest.param(
+            TypedDictAdapter(TypedDictModel4).wrap(TypedDictModel4(a=1)),
+            TypedDictModel4(a=2),
+            id="typeddict",
+        ),
+        pytest.param(PydanticModel4(a=1), PydanticModel4(a=2), id="pydantic"),
+        pytest.param(PydanticV1Model4(a=1), PydanticV1Model4(a=2), id="pydantic_v1"),
     ],
 )
 @pytest.mark.parametrize(
     "b",
     [
         pytest.param(DataclassModel4(a=1), id="dataclass"),
+        pytest.param(TypedDictAdapter(TypedDictModel4).wrap(TypedDictModel4(a=1)), id="typeddict"),
         pytest.param(PydanticModel4(a=1), id="pydantic"),
         pytest.param(PydanticV1Model4(a=1), id="pydantic_v1"),
     ],
 )
-def test_merge_mixed(a: typing.Any, b: typing.Any):
-    cls = type(a)  # type: ignore
+def test_merge_mixed(a: typing.Any, b: typing.Any, expected: typing.Any):
     result = sut.merge(a, b)
-    assert result == cls(a=2)
+    assert result == expected

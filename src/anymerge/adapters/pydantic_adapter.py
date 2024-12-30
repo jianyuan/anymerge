@@ -52,7 +52,8 @@ class PydanticAdapter(BaseAdapter[T], typing.Generic[T]):
                 for field_name, field in self.model.__fields__.items()
             }
 
-        raise AnyMergeTypeError(f"Unsupported Pydantic model type: {self.model}")
+        msg = f"Unsupported Pydantic model type: {self.model}"
+        raise AnyMergeTypeError(msg)
 
     def get_values(self, value: T) -> dict[typing.Any, typing.Any]:
         return dict(value)
@@ -64,4 +65,5 @@ class PydanticAdapter(BaseAdapter[T], typing.Generic[T]):
         if is_pydantic_v1_model(value):
             return typing.cast(T, value.copy(update=changes))
 
-        raise AnyMergeTypeError(f"Unsupported Pydantic model type: {value}")
+        msg = f"Unsupported Pydantic model type: {value}"
+        raise AnyMergeTypeError(msg)

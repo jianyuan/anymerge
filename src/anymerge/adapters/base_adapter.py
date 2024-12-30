@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import abc
 import typing
 
-from anymerge.models import FieldInfo
+if typing.TYPE_CHECKING:
+    from anymerge.models import FieldInfo
 
 T = typing.TypeVar("T")
 
@@ -55,3 +58,51 @@ class BaseAdapter(abc.ABC, typing.Generic[T]):
         Returns:
             The copied instance.
         """
+
+    def wrap(self, value: T) -> WrappedValue[T]:
+        """Wrap the value with the adapter.
+
+        Args:
+            value: The value to wrap.
+
+        Returns:
+            The wrapped value.
+        """
+        return WrappedValue(value, adapter=self)
+
+
+class WrappedValue(typing.Generic[T]):
+    """A wrapped value with an adapter."""
+
+    value: T
+    """The wrapped value."""
+
+    adapter: BaseAdapter[T]
+    """The adapter for the value."""
+
+    def __init__(self, value: T, *, adapter: BaseAdapter[T]) -> None:
+        self.value = value
+        self.adapter = adapter
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, WrappedValue):
+            return False
+        return self.value == other.value
+
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.value!r})"
+
+    def __str__(self) -> str:
+        return str(self.value)
+
+    def unwrap(self) -> T:
+        return self.value
+
+    def get_values(self) -> dict[typing.Any, typing.Any]:
+        return self.adapter.get_values(self.value)
+
+    def copy(self, *, changes: dict[typing.Any, typing.Any]) -> T:
+        return self.adapter.copy(self.value, changes=changes)
