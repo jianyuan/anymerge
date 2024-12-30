@@ -3,11 +3,13 @@ site_url: https://anymerge.jianyuan.io/
 repo_url: https://github.com/jianyuan/anymerge
 watch:
   - docs
-  - src
+  - docs_src
   - mkdocs.yml
+  - src
 
 theme:
   name: material
+  custom_dir: docs_src/overrides
   features:
     - content.code.annotate
     - content.code.copy
@@ -15,7 +17,6 @@ theme:
     - navigation.instant
     - navigation.instant.progress
     - navigation.sections
-    - navigation.tabs
     - navigation.top
     - navigation.tracking
     - search.highlight
@@ -46,13 +47,16 @@ theme:
 
 extra:
   social: []
+  analytics:
+    provider: custom
+    project_api_key: phc_w1et8xMTXJzQvhq180xfr3SFjRBWcxAvOA3cDtt4u8A
 
 plugins:
   - search
   - autorefs
   - gen-files:
       scripts:
-        - docs/gen_ref_pages.py
+        - docs_src/gen_ref_pages.py
   - literate-nav:
       nav_file: SUMMARY.md
   - section-index
@@ -75,6 +79,7 @@ plugins:
             line_length: 60
             signature_crossrefs: true
             unwrap_annotated: true
+  - link-marker
 
 markdown_extensions:
   - attr_list

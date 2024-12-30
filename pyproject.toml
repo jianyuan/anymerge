@@ -43,6 +43,7 @@ check = "mypy --install-types --non-interactive {args:src/anymerge tests}"
 dependencies = [
   "mkdocs-autorefs",
   "mkdocs-gen-files",
+  "mkdocs-link-marker",
   "mkdocs-literate-nav",
   "mkdocs-material",
   "mkdocs-section-index",
@@ -75,7 +76,7 @@ exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [tool.ruff]
 line-length = 100
-extend-exclude = ["docs"]
+extend-exclude = ["docs", "docs_src"]
 
 [tool.ruff.lint]
 ignore = ["FBT001", "SIM108"]
