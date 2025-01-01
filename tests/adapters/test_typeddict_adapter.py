@@ -13,6 +13,7 @@ from tests.adapters import fixtures
     [
         (None, False),
         (1, False),
+        ({}, False),
         (fixtures.DataclassModel, False),
         (fixtures.TypedDictModel, True),
         (fixtures.PydanticModel, False),

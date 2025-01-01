@@ -227,3 +227,21 @@ def test_merge(a: typing.Any, b: typing.Any, expected: typing.Any):
 def test_merge_mixed(a: typing.Any, b: typing.Any, expected: typing.Any):
     result = sut.merge(a, b)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("a", "expected"),
+    [
+        pytest.param(DataclassModel4(a=1), DataclassModel4(a=2), id="dataclass"),
+        pytest.param(
+            TypedDictAdapter(TypedDictModel4).wrap(TypedDictModel4(a=1)),
+            TypedDictModel4(a=2),
+            id="typeddict",
+        ),
+        pytest.param(PydanticModel4(a=1), PydanticModel4(a=2), id="pydantic"),
+        pytest.param(PydanticV1Model4(a=1), PydanticV1Model4(a=2), id="pydantic_v1"),
+    ],
+)
+def test_merge_with_dict(a: typing.Any, expected: typing.Any):
+    result = sut.merge(a, {"a": 1})
+    assert result == expected
