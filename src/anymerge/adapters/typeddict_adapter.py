@@ -1,6 +1,6 @@
 import typing
 
-from anymerge._typing_utils import extract_reducer, get_base_type
+from anymerge._typing_utils import extract_reducer, get_base_type, lenient_isinstance
 from anymerge.adapters.base_adapter import BaseAdapter
 from anymerge.models import FieldInfo
 
@@ -10,7 +10,9 @@ T = typing.TypeVar("T", bound=typing.Mapping[typing.Any, typing.Any])
 class TypedDictAdapter(BaseAdapter[T], typing.Generic[T]):
     @classmethod
     def is_supported_type(cls, value: typing.Any) -> typing.TypeGuard[type[T]]:
-        return typing.is_typeddict(value)
+        return typing.is_typeddict(value) and not (
+            lenient_isinstance(value, dict) or typing.get_origin(value) is dict
+        )
 
     def get_fields(self) -> dict[typing.Any, FieldInfo]:
         type_hints = typing.get_type_hints(self.model, include_extras=True)

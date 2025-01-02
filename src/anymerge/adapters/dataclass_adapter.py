@@ -5,6 +5,7 @@ import typing
 
 from anymerge._typing_utils import extract_reducer, get_base_type
 from anymerge.adapters.base_adapter import BaseAdapter
+from anymerge.exceptions import AnyMergeValueError
 from anymerge.models import FieldInfo
 
 if typing.TYPE_CHECKING:
@@ -19,6 +20,9 @@ class DataclassAdapter(BaseAdapter[T], typing.Generic[T]):
         return dataclasses.is_dataclass(value)
 
     def get_fields(self) -> dict[typing.Any, FieldInfo]:
+        if self.model is None:
+            msg = "model is not set"
+            raise AnyMergeValueError(msg)
         return {
             field.name: FieldInfo(
                 name=field.name,

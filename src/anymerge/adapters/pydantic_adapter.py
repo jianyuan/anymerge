@@ -4,7 +4,12 @@ import pydantic
 import pydantic.v1
 import typing_extensions
 
-from anymerge._typing_utils import extract_reducer, get_base_type
+from anymerge._typing_utils import (
+    extract_reducer,
+    get_base_type,
+    lenient_isinstance,
+    lenient_issubclass,
+)
 from anymerge.adapters.base_adapter import BaseAdapter
 from anymerge.exceptions import AnyMergeTypeError
 from anymerge.models import FieldInfo, ReducerInfo
@@ -13,14 +18,14 @@ T = typing.TypeVar("T", bound=pydantic.BaseModel | pydantic.v1.BaseModel)
 
 
 def is_pydantic_v1_model(value: typing.Any) -> typing_extensions.TypeIs[pydantic.v1.BaseModel]:
-    return isinstance(value, pydantic.v1.BaseModel) or (
-        isinstance(value, type) and issubclass(value, pydantic.v1.BaseModel)
+    return lenient_isinstance(value, pydantic.v1.BaseModel) or lenient_issubclass(
+        value, pydantic.v1.BaseModel
     )
 
 
 def is_pydantic_v2_model(value: typing.Any) -> typing_extensions.TypeIs[pydantic.BaseModel]:
-    return isinstance(value, pydantic.BaseModel) or (
-        isinstance(value, type) and issubclass(value, pydantic.BaseModel)
+    return lenient_isinstance(value, pydantic.BaseModel) or (
+        lenient_issubclass(value, pydantic.BaseModel)
     )
 
 

@@ -28,3 +28,17 @@ def extract_reducer(annotation: typing.Any) -> list[ReducerInfo] | None:
         result = [data for data in metadata if isinstance(data, ReducerInfo)]
 
     return result or None
+
+
+def lenient_isinstance(value: typing.Any, class_or_tuple: typing.Any) -> bool:
+    try:
+        return isinstance(value, class_or_tuple)
+    except TypeError:
+        return False
+
+
+def lenient_issubclass(cls: typing.Any, class_or_tuple: typing.Any) -> bool:
+    try:
+        return isinstance(cls, type) and issubclass(cls, class_or_tuple)
+    except TypeError:
+        return False
