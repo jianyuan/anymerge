@@ -63,7 +63,7 @@ Pydantic's `model_copy(update=...)` replaces each field you pass with the new va
 
 The [documentation](https://anymerge.jian.fyi) covers supported models, reducers, updates and lists of records, and has an API reference. Changes are listed in the [release notes](https://github.com/jianyuan/anymerge/releases), and bugs and ideas go in the [issue tracker](https://github.com/jianyuan/anymerge/issues).
 
-anymerge is at version 0.x, so a minor release can still change the API. Breaking changes are called out in the release notes.
+anymerge is at version 0.x, so a minor release can still change the API. Patch releases never do, and breaking changes are called out in the release notes. See the [stability policy](https://anymerge.jian.fyi/stability/).
 
 ## License
 
