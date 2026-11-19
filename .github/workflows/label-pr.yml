@@ -50,7 +50,7 @@ jobs:
             };
             // Used when the title has no known type: the first rule that matches every changed file.
             const fileRules = [
-              ["docs", (file) => /(^|\/)docs?\/|\.(md|mdx|rst)$|^mkdocs\.ya?ml$/i.test(file)],
+              ["docs", (file) => /(^|\/)docs?\/|\.(md|mdx|rst)$|^zensical\.toml$/i.test(file)],
               ["dependencies", (file) => /(^|\/)(uv\.lock|poetry\.lock|package-lock\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?|go\.sum|Cargo\.lock|Gemfile\.lock|composer\.lock)$/.test(file)],
               ["maintenance", (file) => /^\.github\/|^\.pre-commit-config\.yaml$|^renovate\.json5?$|^\.gitignore$/.test(file)],
             ];

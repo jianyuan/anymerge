@@ -29,14 +29,11 @@ Source = "https://github.com/jianyuan/anymerge"
 [dependency-groups]
 dev = ["mypy>=1.0.0", "pytest", "pytest-cov", "ruff"]
 docs = [
+  "mkdocs-api-autonav",
   "mkdocs-autorefs",
-  "mkdocs-gen-files",
-  "mkdocs-link-marker",
-  "mkdocs-literate-nav",
-  "mkdocs-material",
-  "mkdocs-section-index",
   "mkdocstrings-python",
   "ruff",
+  "zensical",
 ]
 
 [build-system]

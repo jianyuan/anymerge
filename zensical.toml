@@ -1,0 +1,90 @@
+[project]
+site_name = "anymerge"
+site_url = "https://anymerge.jian.fyi/"
+repo_url = "https://github.com/jianyuan/anymerge"
+nav = [{ anymerge = "index.md" }]
+
+[project.theme]
+variant = "modern"
+custom_dir = "docs_src/overrides"
+features = [
+  "content.code.annotate",
+  "content.code.copy",
+  "navigation.footer",
+  "navigation.instant",
+  "navigation.instant.progress",
+  "navigation.sections",
+  "navigation.top",
+  "navigation.tracking",
+  "search.highlight",
+  "search.share",
+  "search.suggest",
+  "toc.follow",
+]
+
+[project.theme.font]
+text = "Geist"
+code = "Geist Mono"
+
+# Palette toggle for light mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "deep purple"
+accent = "deep purple"
+toggle.icon = "material/weather-sunny"
+toggle.name = "Switch to dark mode"
+
+# Palette toggle for dark mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "deep purple"
+accent = "deep purple"
+toggle.icon = "material/weather-night"
+toggle.name = "Switch to light mode"
+
+[project.extra]
+social = []
+
+[project.extra.analytics]
+provider = "custom"
+project_api_key = "phc_w1et8xMTXJzQvhq180xfr3SFjRBWcxAvOA3cDtt4u8A"
+
+[project.plugins.search]
+
+[project.plugins.autorefs]
+
+[project.plugins.api-autonav]
+modules = ["src/anymerge"]
+nav_section_title = "API Reference"
+nav_item_prefix = ""
+
+[project.plugins.mkdocstrings.handlers.python.options]
+# Headings
+show_root_heading = true
+show_symbol_type_heading = true
+show_symbol_type_toc = true
+# Members
+members_order = "source"
+# Docstrings
+docstring_section_style = "spacy"
+merge_init_into_class = true
+# Signatures
+show_signature_annotations = true
+separate_signature = true
+line_length = 60
+signature_crossrefs = true
+unwrap_annotated = true
+
+[project.markdown_extensions]
+attr_list = {}
+pymdownx.highlight.default_lang = "python"
+pymdownx.highlight.anchor_linenums = true
+pymdownx.highlight.line_spans = "__span"
+pymdownx.highlight.pygments_lang_class = true
+pymdownx.inlinehilite = {}
+pymdownx.magiclink = {}
+pymdownx.snippets = {}
+pymdownx.superfences = {}
+toc.permalink = true
