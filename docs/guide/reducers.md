@@ -18,7 +18,7 @@ print(merge(State(name="a", total=1), State(name="b", total=2)))
 #> name='b' total=3
 ```
 
-A field without a reducer takes the new value. Fields the update doesn't contain are left as they are.
+A field without a reducer takes the new value. Fields the update doesn't contain are left as they are. The examples on this page use Pydantic models, which need the [`pydantic` extra](../models/pydantic.md), and reducers work the same way on [dataclasses](../models/dataclasses.md) and [TypedDicts](../models/typeddicts.md).
 
 ## Common reducers
 

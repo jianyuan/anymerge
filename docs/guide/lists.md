@@ -1,6 +1,6 @@
 # Lists of records
 
-`merge_by_key` is a reducer for lists of records that each have a key, such as an ID. It matches items in the update to items in the current list by key:
+`merge_by_key` is a reducer for lists of records that each have a key, such as an ID. It works the same on every kind of model, and the examples on this page use Pydantic models, which need the [`pydantic` extra](../models/pydantic.md). It matches items in the update to items in the current list by key:
 
 - An item with a matching key replaces the current one, in the same position.
 - An item with a new key is appended.
@@ -28,7 +28,7 @@ print(merge(state, {"todos": [Todo(id=1, done=True), Remove(2), Todo(id=3)]}))
 #> todos=[Todo(id=1, done=True), Todo(id=3, done=False)]
 ```
 
-Like `Overwrite`, `Remove` goes in a dict update, because Pydantic models reject it when they validate the field.
+Like `Overwrite`, `Remove` goes in a dict update, because a Pydantic model [rejects it](../models/pydantic.md#markers-go-in-dict-updates) when it validates the field.
 
 ## Choosing the key
 

@@ -4,8 +4,13 @@ site_url = "https://anymerge.jian.fyi/"
 repo_url = "https://github.com/jianyuan/anymerge"
 nav = [
   { anymerge = "index.md" },
+  { Models = [
+    { "Choosing a model" = "models/index.md" },
+    { Dataclasses = "models/dataclasses.md" },
+    { "Pydantic models" = "models/pydantic.md" },
+    { TypedDicts = "models/typeddicts.md" },
+  ] },
   { Guide = [
-    { "Supported models" = "guide/models.md" },
     { Reducers = "guide/reducers.md" },
     { Updates = "guide/updates.md" },
     { "Lists of records" = "guide/lists.md" },
@@ -66,7 +71,6 @@ project_api_key = "phc_w1et8xMTXJzQvhq180xfr3SFjRBWcxAvOA3cDtt4u8A"
 [project.plugins.api-autonav]
 modules = ["src/anymerge"]
 nav_section_title = "API Reference"
-nav_item_prefix = ""
 
 [project.plugins.mkdocstrings.handlers.python.options]
 # Headings
