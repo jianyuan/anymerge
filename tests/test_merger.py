@@ -8,6 +8,7 @@ import pytest
 import anymerge._merger as sut
 from anymerge._api import Reducer
 from anymerge.adapters.typeddict_adapter import TypedDictAdapter
+from anymerge.exceptions import AnyMergeTypeError
 from anymerge.models import Overwrite
 from tests.adapters import future_annotations_fixtures
 
@@ -265,3 +266,46 @@ def test_merge_slots_dataclass():
 )
 def test_merge_string_annotations(a: typing.Any, expected: typing.Any):
     assert sut.merge(a, {"a": 2}) == expected
+
+
+@pytest.mark.parametrize(
+    ("a", "b", "notes"),
+    [
+        pytest.param(DataclassModel4(a=1), {"a": "x"}, ["while merging field 'a'"], id="flat"),
+        pytest.param(
+            PydanticModel6(a=PydanticModel4(a=1)),
+            {"a": {"a": "x"}},
+            ["while merging field 'a'", "while merging field 'a'"],
+            id="nested",
+        ),
+    ],
+)
+def test_merge_error_names_field(a: typing.Any, b: typing.Any, notes: list[str]):
+    with pytest.raises(TypeError) as excinfo:
+        sut.merge(a, b)
+    assert excinfo.value.__notes__ == notes
+
+
+@pytest.mark.parametrize(
+    ("a", "b", "message"),
+    [
+        pytest.param(
+            DataclassModel4,
+            {"a": 1},
+            "expected an instance, got the class DataclassModel4",
+            id="class-base",
+        ),
+        pytest.param(
+            DataclassModel4(a=1),
+            DataclassModel4,
+            "expected an instance, got the class DataclassModel4",
+            id="class-update",
+        ),
+        pytest.param(
+            DataclassModel4(a=1), 5, "unsupported type int: expected a dataclass", id="unsupported"
+        ),
+    ],
+)
+def test_merge_rejects_invalid_values(a: typing.Any, b: typing.Any, message: str):
+    with pytest.raises(AnyMergeTypeError, match=message):
+        sut.merge(a, b)

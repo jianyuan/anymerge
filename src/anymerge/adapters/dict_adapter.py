@@ -16,7 +16,10 @@ class DictAdapter(BaseAdapter[T], typing.Generic[T]):
         )
 
     def get_fields(self) -> dict[typing.Any, FieldInfo]:
-        msg = "dicts do not support field annotations, please use a TypedDict with DictAdapter instead"
+        msg = (
+            "a plain dict has no field annotations, so it can't be the base of a merge; "
+            "declare a TypedDict and wrap the base with TypedDictAdapter(Model).wrap(value)"
+        )
         raise AnyMergeTypeError(msg)
 
     def get_values(self, value: T) -> dict[typing.Any, typing.Any]:
