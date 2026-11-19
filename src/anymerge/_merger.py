@@ -53,6 +53,10 @@ def merge(
     for key, value in b_values.items():
         if key not in fields:
             continue
+        if key not in a_values:
+            # Nothing to reduce with, e.g. a NotRequired key missing from a TypedDict base
+            changes[key] = value.value if isinstance(value, Overwrite) else value
+            continue
         try:
             changes[key] = apply_reducers(
                 a_values[key],

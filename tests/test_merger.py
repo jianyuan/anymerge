@@ -309,3 +309,18 @@ def test_merge_error_names_field(a: typing.Any, b: typing.Any, notes: list[str])
 def test_merge_rejects_invalid_values(a: typing.Any, b: typing.Any, message: str):
     with pytest.raises(AnyMergeTypeError, match=message):
         sut.merge(a, b)
+
+
+class NotRequiredTypedDictModel(typing.TypedDict):
+    """TypedDict with a NotRequired reducer field"""
+
+    a: typing.NotRequired[typing.Annotated[list[int], Reducer(operator.add)]]
+
+
+@pytest.mark.parametrize(
+    "value",
+    [pytest.param([1], id="plain"), pytest.param(Overwrite([1]), id="overwrite")],
+)
+def test_merge_into_missing_not_required_key(value: typing.Any):
+    base = TypedDictAdapter(NotRequiredTypedDictModel).wrap(NotRequiredTypedDictModel())
+    assert sut.merge(base, {"a": value}) == {"a": [1]}
