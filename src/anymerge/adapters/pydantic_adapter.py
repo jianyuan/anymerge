@@ -1,6 +1,8 @@
+from __future__ import annotations
+
+import sys
 import typing
 
-import pydantic
 import typing_extensions
 
 from anymerge._typing_utils import (
@@ -11,10 +13,17 @@ from anymerge._typing_utils import (
 from anymerge.adapters.base_adapter import BaseAdapter
 from anymerge.models import FieldInfo, ReducerInfo
 
-T = typing.TypeVar("T", bound=pydantic.BaseModel)
+if typing.TYPE_CHECKING:
+    import pydantic
+
+T = typing.TypeVar("T", bound="pydantic.BaseModel")
 
 
 def is_pydantic_model(value: typing.Any) -> typing_extensions.TypeIs[pydantic.BaseModel]:
+    # pydantic is optional; a Pydantic model can only exist once pydantic has been imported
+    pydantic = sys.modules.get("pydantic")
+    if pydantic is None:
+        return False
     return lenient_isinstance(value, pydantic.BaseModel) or (
         lenient_issubclass(value, pydantic.BaseModel)
     )

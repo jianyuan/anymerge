@@ -34,7 +34,7 @@ The result is built with `dataclasses.replace`, so frozen dataclasses work too.
 
 ## Pydantic models
 
-Pydantic 2 models are supported. The result is built with `model_copy`, which does not run validation again:
+Pydantic 2 models are supported once you install the `pydantic` extra (`pip install "anymerge[pydantic]"`). The result is built with `model_copy`, which does not run validation again:
 
 ```python
 import operator

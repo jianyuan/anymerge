@@ -34,7 +34,13 @@ print(state)
 $ pip install anymerge
 ```
 
-anymerge needs Python 3.11 or later and Pydantic 2.
+To merge Pydantic models, install the `pydantic` extra, which adds Pydantic 2:
+
+```console
+$ pip install "anymerge[pydantic]"
+```
+
+anymerge needs Python 3.11 or later. Dataclasses and TypedDicts work without any other dependency.
 
 ## Where to go next
 
