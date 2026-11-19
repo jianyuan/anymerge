@@ -1,29 +1,20 @@
 import typing
 
 import pydantic
-import pydantic.v1
 import typing_extensions
 
 from anymerge._typing_utils import (
-    extract_reducer,
     get_base_type,
     lenient_isinstance,
     lenient_issubclass,
 )
 from anymerge.adapters.base_adapter import BaseAdapter
-from anymerge.exceptions import AnyMergeTypeError
 from anymerge.models import FieldInfo, ReducerInfo
 
-T = typing.TypeVar("T", bound=pydantic.BaseModel | pydantic.v1.BaseModel)
+T = typing.TypeVar("T", bound=pydantic.BaseModel)
 
 
-def is_pydantic_v1_model(value: typing.Any) -> typing_extensions.TypeIs[pydantic.v1.BaseModel]:
-    return lenient_isinstance(value, pydantic.v1.BaseModel) or lenient_issubclass(
-        value, pydantic.v1.BaseModel
-    )
-
-
-def is_pydantic_v2_model(value: typing.Any) -> typing_extensions.TypeIs[pydantic.BaseModel]:
+def is_pydantic_model(value: typing.Any) -> typing_extensions.TypeIs[pydantic.BaseModel]:
     return lenient_isinstance(value, pydantic.BaseModel) or (
         lenient_issubclass(value, pydantic.BaseModel)
     )
@@ -32,43 +23,22 @@ def is_pydantic_v2_model(value: typing.Any) -> typing_extensions.TypeIs[pydantic
 class PydanticAdapter(BaseAdapter[T], typing.Generic[T]):
     @classmethod
     def is_supported_type(cls, value: typing.Any) -> typing.TypeGuard[type[T]]:
-        return is_pydantic_v2_model(value) or is_pydantic_v1_model(value)
+        return is_pydantic_model(value)
 
     def get_fields(self) -> dict[typing.Any, FieldInfo]:
-        if is_pydantic_v2_model(self.model):
-            return {
-                field_name: FieldInfo(
-                    name=field_name,
-                    base_type=get_base_type(field.annotation),
-                    reducers=(
-                        [data for data in field.metadata if isinstance(data, ReducerInfo)] or None
-                    ),
-                )
-                for field_name, field in self.model.__pydantic_fields__.items()
-            }
-
-        if is_pydantic_v1_model(self.model):
-            return {
-                field_name: FieldInfo(
-                    name=field_name,
-                    base_type=get_base_type(field.annotation),
-                    reducers=extract_reducer(field.annotation) or None,
-                )
-                for field_name, field in self.model.__fields__.items()
-            }
-
-        msg = f"Unsupported Pydantic model type: {self.model}"
-        raise AnyMergeTypeError(msg)
+        return {
+            field_name: FieldInfo(
+                name=field_name,
+                base_type=get_base_type(field.annotation),
+                reducers=(
+                    [data for data in field.metadata if isinstance(data, ReducerInfo)] or None
+                ),
+            )
+            for field_name, field in self.model.__pydantic_fields__.items()
+        }
 
     def get_values(self, value: T) -> dict[typing.Any, typing.Any]:
         return dict(value)
 
     def copy(self, value: T, *, changes: dict[typing.Any, typing.Any]) -> T:
-        if is_pydantic_v2_model(value):
-            return typing.cast("T", value.model_copy(update=changes))
-
-        if is_pydantic_v1_model(value):
-            return typing.cast("T", value.copy(update=changes))
-
-        msg = f"Unsupported Pydantic model type: {value}"
-        raise AnyMergeTypeError(msg)
+        return value.model_copy(update=changes)

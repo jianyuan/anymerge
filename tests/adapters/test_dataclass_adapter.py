@@ -18,7 +18,6 @@ from tests.adapters import fixtures
         (fixtures.DataclassModel, True),
         (fixtures.TypedDictModel, False),
         (fixtures.PydanticModel, False),
-        (fixtures.PydanticV1Model, False),
     ],
 )
 def test_dataclass_adapter_is_supported_type(value: typing.Any, expected: bool):

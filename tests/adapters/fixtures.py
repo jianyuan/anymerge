@@ -3,7 +3,6 @@ import operator
 import typing
 
 import pydantic
-import pydantic.v1
 
 from anymerge._api import Reducer
 
@@ -127,41 +126,3 @@ class PydanticModel6(pydantic.BaseModel):
     """Pydantic model with one field with deep reducer"""
 
     a: typing.Annotated[PydanticModel4, Reducer(deep=True)]
-
-
-class PydanticV1Model(pydantic.v1.BaseModel):
-    pass
-
-
-class PydanticV1Model1(pydantic.v1.BaseModel):
-    """Bare Pydantic V1 model"""
-
-
-class PydanticV1Model2(PydanticV1Model1):
-    """Pydantic V1 model with one field"""
-
-    a: int
-
-
-class PydanticV1Model3(PydanticV1Model2):
-    """Pydantic V1 model with two fields, one inherited"""
-
-    b: str
-
-
-class PydanticV1Model4(PydanticV1Model2):
-    """Pydantic V1 model with one overridden field"""
-
-    a: typing.Annotated[int, Reducer(operator.add)]
-
-
-class PydanticV1Model5(pydantic.v1.BaseModel):
-    """Pydantic V1 model with one field with deep reducer"""
-
-    a: typing.Annotated[PydanticV1Model4, Reducer(...)]
-
-
-class PydanticV1Model6(pydantic.v1.BaseModel):
-    """Pydantic V1 model with one field with deep reducer"""
-
-    a: typing.Annotated[PydanticV1Model4, Reducer(deep=True)]

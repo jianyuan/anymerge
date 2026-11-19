@@ -18,7 +18,6 @@ from tests.adapters import fixtures
         (fixtures.DataclassModel, False),
         (fixtures.TypedDictModel, False),
         (fixtures.PydanticModel, True),
-        (fixtures.PydanticV1Model, True),
     ],
 )
 def test_pydantic_adapter_is_supported_type(value: typing.Any, expected: bool):
@@ -64,45 +63,6 @@ def test_pydantic_adapter_is_supported_type(value: typing.Any, expected: bool):
             {
                 "a": FieldInfo(
                     name="a", base_type=fixtures.PydanticModel4, reducers=[ReducerInfo(deep=True)]
-                ),
-            },
-        ),
-        (
-            fixtures.PydanticV1Model1,
-            {},
-        ),
-        (
-            fixtures.PydanticV1Model2,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=None),
-            },
-        ),
-        (
-            fixtures.PydanticV1Model3,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=None),
-                "b": FieldInfo(name="b", base_type=str, reducers=None),
-            },
-        ),
-        (
-            fixtures.PydanticV1Model4,
-            {
-                "a": FieldInfo(name="a", base_type=int, reducers=[ReducerInfo(operator.add)]),
-            },
-        ),
-        (
-            fixtures.PydanticV1Model5,
-            {
-                "a": FieldInfo(
-                    name="a", base_type=fixtures.PydanticV1Model4, reducers=[ReducerInfo(deep=True)]
-                ),
-            },
-        ),
-        (
-            fixtures.PydanticV1Model6,
-            {
-                "a": FieldInfo(
-                    name="a", base_type=fixtures.PydanticV1Model4, reducers=[ReducerInfo(deep=True)]
                 ),
             },
         ),
@@ -156,47 +116,6 @@ def test_pydantic_adapter_get_fields(value: typing.Any, expected: dict[typing.An
                 "a": fixtures.PydanticModel4(a=1),
             },
         ),
-        (
-            fixtures.PydanticV1Model1,
-            fixtures.PydanticV1Model1(),
-            {},
-        ),
-        (
-            fixtures.PydanticV1Model2,
-            fixtures.PydanticV1Model2(a=1),
-            {
-                "a": 1,
-            },
-        ),
-        (
-            fixtures.PydanticV1Model3,
-            fixtures.PydanticV1Model3(a=1, b="b"),
-            {
-                "a": 1,
-                "b": "b",
-            },
-        ),
-        (
-            fixtures.PydanticV1Model4,
-            fixtures.PydanticV1Model4(a=1),
-            {
-                "a": 1,
-            },
-        ),
-        (
-            fixtures.PydanticV1Model5,
-            fixtures.PydanticV1Model5(a=fixtures.PydanticV1Model4(a=1)),
-            {
-                "a": fixtures.PydanticV1Model4(a=1),
-            },
-        ),
-        (
-            fixtures.PydanticV1Model6,
-            fixtures.PydanticV1Model6(a=fixtures.PydanticV1Model4(a=1)),
-            {
-                "a": fixtures.PydanticV1Model4(a=1),
-            },
-        ),
     ],
 )
 def test_pydantic_adapter_get_values(
@@ -211,7 +130,6 @@ def test_pydantic_adapter_get_values(
     ("model", "value", "expected"),
     [
         (fixtures.PydanticModel2, fixtures.PydanticModel2(a=1), fixtures.PydanticModel2(a=2)),
-        (fixtures.PydanticV1Model2, fixtures.PydanticV1Model2(a=1), fixtures.PydanticV1Model2(a=2)),
     ],
 )
 def test_pydantic_adapter_copy(
