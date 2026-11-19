@@ -1,6 +1,7 @@
 import typing
 
 from anymerge.adapters._utils import maybe_adapt_value
+from anymerge.adapters.base_adapter import WrappedValue
 from anymerge.exceptions import AnyMergeValueError
 from anymerge.models import DEFAULT_REDUCER, FieldInfo, Overwrite, ReducerInfo
 
@@ -28,12 +29,30 @@ def apply_reducers(
     return a
 
 
+@typing.overload
+def merge(
+    a: WrappedValue[T],
+    b: typing.Any,
+    *,
+    default_reducer: ReducerInfo = DEFAULT_REDUCER,
+) -> T: ...
+
+
+@typing.overload
 def merge(
     a: T,
     b: typing.Any,
     *,
     default_reducer: ReducerInfo = DEFAULT_REDUCER,
-) -> T:
+) -> T: ...
+
+
+def merge(
+    a: typing.Any,
+    b: typing.Any,
+    *,
+    default_reducer: ReducerInfo = DEFAULT_REDUCER,
+) -> typing.Any:
     """
     Merge two instances of data models.
 
@@ -59,7 +78,7 @@ def merge(
         if name in fields:
             field_info = fields[name]
         elif allows_extra_fields:
-            field_info = FieldInfo(name=name, base_type=typing.Any, reducers=None)
+            field_info = FieldInfo(name=name, base_type=object, reducers=None)
         else:
             continue
         if name in seen_keys:
