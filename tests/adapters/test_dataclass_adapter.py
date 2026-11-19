@@ -116,6 +116,7 @@ def test_dataclass_adapter_get_fields(value: typing.Any, expected: dict[typing.A
                 "a": fixtures.DataclassModel4(a=1),
             },
         ),
+        (fixtures.DataclassModel7, fixtures.DataclassModel7(a=1), {"a": 1}),
     ],
 )
 def test_dataclass_adapter_get_values(

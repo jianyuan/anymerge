@@ -33,7 +33,8 @@ class DataclassAdapter(BaseAdapter[T], typing.Generic[T]):
         }
 
     def get_values(self, value: T) -> dict[typing.Any, typing.Any]:
-        return vars(value)
+        # Read declared fields, since slots dataclasses have no __dict__ for vars()
+        return {field.name: getattr(value, field.name) for field in dataclasses.fields(value)}
 
     def copy(self, value: T, *, changes: dict[typing.Any, typing.Any]) -> T:
         return dataclasses.replace(value, **changes)

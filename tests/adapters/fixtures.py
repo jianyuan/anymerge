@@ -52,6 +52,13 @@ class DataclassModel6:
     a: typing.Annotated[DataclassModel4, Reducer(deep=True)]
 
 
+@dataclasses.dataclass(slots=True)
+class DataclassModel7:
+    """Dataclass with slots"""
+
+    a: typing.Annotated[int, Reducer(operator.add)]
+
+
 class TypedDictModel(typing.TypedDict):
     pass
 
