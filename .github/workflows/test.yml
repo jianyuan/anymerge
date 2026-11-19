@@ -27,19 +27,23 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.13", "3.12", "3.11", "3.10"]
+        python-version: ["3.15", "3.14", "3.13", "3.12", "3.11"]
 
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install hatch
-        uses: pypa/hatch@install
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Run static analysis
-        run: hatch fmt --check
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
 
       - name: Run type checks
-        run: hatch run types:check
+        run: uv run mypy src/anymerge tests
 
       - name: Run tests
-        run: hatch test --python ${{ matrix.python-version }} --cover --parallel
+        run: uv run pytest --cov
