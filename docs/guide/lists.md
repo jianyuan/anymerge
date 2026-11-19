@@ -55,5 +55,7 @@ print(merge(state, {"scores": [("bob", 5), ("carol", 3)]}))
 ## Edge cases
 
 - Removing a key that isn't in the list does nothing, so applying the same update twice gives the same result.
-- If the current list has two items with the same key, only the last one is kept.
+- If the current list has several items with the same key, they are all kept. An update or `Remove` for that key applies to every one of them.
+- If the update repeats a key, the last item with that key wins.
+- An item that has no field named after the key raises `AnyMergeValueError`.
 - A matched item replaces the current one entirely. Its fields aren't merged.
