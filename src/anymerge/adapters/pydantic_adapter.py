@@ -65,10 +65,10 @@ class PydanticAdapter(BaseAdapter[T], typing.Generic[T]):
 
     def copy(self, value: T, *, changes: dict[typing.Any, typing.Any]) -> T:
         if is_pydantic_v2_model(value):
-            return typing.cast(T, value.model_copy(update=changes))
+            return typing.cast("T", value.model_copy(update=changes))
 
         if is_pydantic_v1_model(value):
-            return typing.cast(T, value.copy(update=changes))
+            return typing.cast("T", value.copy(update=changes))
 
         msg = f"Unsupported Pydantic model type: {value}"
         raise AnyMergeTypeError(msg)

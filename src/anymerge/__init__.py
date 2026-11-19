@@ -4,11 +4,11 @@ from anymerge._merger import merge
 from anymerge._reducer import reduce
 
 __all__ = [
+    "Reducer",
     "exceptions",
     "merge",
     "models",
     "reduce",
-    "Reducer",
     "reducers",
     "types",
 ]

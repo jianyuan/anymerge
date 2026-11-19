@@ -23,4 +23,4 @@ class DictAdapter(BaseAdapter[T], typing.Generic[T]):
         return dict(value)
 
     def copy(self, value: T, *, changes: dict[typing.Any, typing.Any]) -> T:
-        return typing.cast(T, {**value, **changes})
+        return typing.cast("T", {**value, **changes})
