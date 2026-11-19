@@ -82,6 +82,37 @@ print(merge(state, {"items": Overwrite([])}))
 #> items=[]
 ```
 
+### Common reducers
+
+Any function that takes the current value and the new value works as a reducer, so the standard library covers most cases:
+
+| Reducer | Use it for | Result |
+| --- | --- | --- |
+| `operator.add` | Appending to lists, summing numbers, joining strings | `[1] + [2]` → `[1, 2]` |
+| `operator.or_` | Set union, shallow dict update | `or_({"x": 1, "y": 1}, {"y": 2})` → `{"x": 1, "y": 2}` |
+| `max`, `min` | Keeping the highest or lowest value | `max(3, 5)` → `5` |
+| `merge_by_key` | Updating a list of records by ID | See below |
+
+```python
+import operator
+from typing import Annotated
+
+from anymerge import Reducer, merge
+from pydantic import BaseModel
+
+class State(BaseModel):
+    tags: Annotated[set[str], Reducer(operator.or_)] = set()
+    meta: Annotated[dict[str, int], Reducer(operator.or_)] = {}
+    high_score: Annotated[int, Reducer(max)] = 0
+
+
+state = State(tags={"a"}, meta={"x": 1, "y": 1}, high_score=5)
+
+result = merge(state, {"tags": {"b"}, "meta": {"y": 2}, "high_score": 3})
+print(sorted(result.tags), result.meta, result.high_score)
+#> ['a', 'b'] {'x': 1, 'y': 2} 5
+```
+
 ### Merging lists by key
 
 `merge_by_key` merges two lists by matching a key on each item. An item with a matching key replaces the existing one in place, an item with a new key is appended, and `Remove(key)` deletes the item with that key:
