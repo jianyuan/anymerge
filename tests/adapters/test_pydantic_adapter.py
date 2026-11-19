@@ -116,6 +116,8 @@ def test_pydantic_adapter_get_fields(value: typing.Any, expected: dict[typing.An
                 "a": fixtures.PydanticModel4(a=1),
             },
         ),
+        (fixtures.PydanticModel7, fixtures.PydanticModel7(a=1), {"a": 1}),
+        (fixtures.PydanticModel7, fixtures.PydanticModel7(a=1, b="b"), {"a": 1, "b": "b"}),
     ],
 )
 def test_pydantic_adapter_get_values(

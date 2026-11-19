@@ -126,3 +126,10 @@ class PydanticModel6(pydantic.BaseModel):
     """Pydantic model with one field with deep reducer"""
 
     a: typing.Annotated[PydanticModel4, Reducer(deep=True)]
+
+
+class PydanticModel7(pydantic.BaseModel):
+    """Pydantic model with one field with a default"""
+
+    a: int
+    b: str = "b"
