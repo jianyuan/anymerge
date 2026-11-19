@@ -1,6 +1,6 @@
 # Lists of records
 
-`merge_by_key` is a reducer for lists of records that each have a key, such as an ID. It matches items in the update to items in the current list by key:
+`merge_by_key` is a reducer for lists of records that each have a key, such as an ID. It works the same on every kind of model, and the examples on this page use Pydantic models, which need the [`pydantic` extra](../models/pydantic.md). It matches items in the update to items in the current list by key:
 
 - An item with a matching key replaces the current one, in the same position.
 - An item with a new key is appended.

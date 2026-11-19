@@ -3,24 +3,25 @@
 anymerge merges dataclasses, TypedDicts and Pydantic models field by field. Each field decides how its old and new values combine, using a reducer declared in the field's type annotation.
 
 ```python
+import dataclasses
 import operator
 from typing import Annotated
 
 from anymerge import Reducer, merge
-from pydantic import BaseModel
 
-class State(BaseModel):
+@dataclasses.dataclass
+class State:
     status: str  # (1)!
-    total: Annotated[int, Reducer(operator.add)]  # (2)!
-    log: Annotated[list[str], Reducer(operator.add)] = []
+    total: Annotated[int, Reducer(operator.add)] = 0  # (2)!
+    log: Annotated[list[str], Reducer(operator.add)] = dataclasses.field(default_factory=list)
 
 
-state = State(status="pending", total=0)
+state = State(status="pending")
 state = merge(state, {"status": "running", "total": 3, "log": ["started"]})
 state = merge(state, {"total": 2, "log": ["finished"]})
 
 print(state)
-#> status='running' total=5 log=['started', 'finished']
+#> State(status='running', total=5, log=['started', 'finished'])
 ```
 
 1. A field without a reducer takes the new value.

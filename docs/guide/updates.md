@@ -1,6 +1,6 @@
 # Updates
 
-The second argument to `merge` is the update. anymerge merges each of its fields that the base also has, and ignores the rest unless the base is a Pydantic model that allows [extra fields](../models/pydantic.md#extra-fields). The examples on this page use Pydantic models, and everything here works the same for [dataclasses](../models/dataclasses.md) and [TypedDicts](../models/typeddicts.md).
+The second argument to `merge` is the update. anymerge merges each of its fields that the base also has, and ignores the rest unless the base is a Pydantic model that allows [extra fields](../models/pydantic.md#extra-fields). The examples on this page use Pydantic models, which need the [`pydantic` extra](../models/pydantic.md), and everything here works the same for [dataclasses](../models/dataclasses.md) and [TypedDicts](../models/typeddicts.md).
 
 ## Partial updates
 
