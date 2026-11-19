@@ -8,6 +8,7 @@ anymerge works with three kinds of model: dataclasses, Pydantic models and Typed
 | As the base | The instance | The instance | Wrapped with `TypedDictAdapter` |
 | As an update, merges | Every field | Fields set explicitly | The keys present |
 | `merge` returns | A new instance, via `dataclasses.replace` | A new instance, via `model_copy` | A plain dict |
+| Update keys the base doesn't declare | Ignored | Ignored, or kept with `extra="allow"` | Ignored |
 | Validation after merge | None | None | None |
 
 The first argument to `merge` is the base, the instance being updated. Its type annotations hold the reducers. The second argument is the update.

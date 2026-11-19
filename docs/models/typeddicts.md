@@ -67,4 +67,5 @@ print(merge(TypedDictAdapter(State).wrap(State()), {"tags": ["x"]}))
 ## Limitations
 
 - `Reducer(...)` can't deep-merge a TypedDict nested inside another TypedDict, because the nested value is a plain dict with no type attached. Use a dataclass or Pydantic model for nested state that needs deep merging.
+- Update keys the TypedDict doesn't declare are ignored without a warning, so a misspelled key changes nothing.
 - `merge` doesn't check types, so a reducer or update can put a value of the wrong type in a key.

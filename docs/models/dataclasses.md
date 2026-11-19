@@ -54,4 +54,5 @@ Reducers work in modules that use `from __future__ import annotations`, where an
 
 - A field declared with `field(init=False)` can't be updated. `dataclasses.replace` rejects it and `merge` raises `TypeError`. Merges that leave the field out work as usual.
 - `dataclasses.replace` runs `__post_init__` again. An `InitVar` is passed its default value, not the value the base was created with.
+- Update keys that aren't fields of the dataclass are ignored without a warning, so a misspelled key changes nothing.
 - `merge` doesn't check types, so a reducer or update can put a value of the wrong type in a field.

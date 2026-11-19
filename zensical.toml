@@ -15,6 +15,7 @@ nav = [
     { Updates = "guide/updates.md" },
     { "Lists of records" = "guide/lists.md" },
   ] },
+  { Stability = "stability.md" },
 ]
 
 [project.theme]
