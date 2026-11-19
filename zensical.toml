@@ -15,7 +15,18 @@ nav = [
     { Updates = "guide/updates.md" },
     { "Lists of records" = "guide/lists.md" },
   ] },
-  { Stability = "stability.md" },
+  { "AI applications" = [
+    { Overview = "ai/index.md" },
+    { "Agent state" = "ai/agent-state.md" },
+    { "Streaming responses" = "ai/streaming.md" },
+    { Retrieval = "ai/retrieval.md" },
+    { "Structured extraction" = "ai/extraction.md" },
+    { "Model settings" = "ai/settings.md" },
+    { "Evaluation results" = "ai/evals.md" },
+  ] },
+  { Project = [
+    { Stability = "stability.md" },
+  ] },
 ]
 
 [project.theme]
