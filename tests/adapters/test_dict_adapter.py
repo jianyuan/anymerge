@@ -29,7 +29,8 @@ def test_dict_adapter_get_fields():
 
     assert (
         str(excinfo.value)
-        == "dicts do not support field annotations, please use a TypedDict with DictAdapter instead"
+        == "a plain dict has no field annotations, so it can't be the base of a merge; "
+        "declare a TypedDict and wrap the base with TypedDictAdapter(Model).wrap(value)"
     )
 
 

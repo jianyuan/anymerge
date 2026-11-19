@@ -49,15 +49,20 @@ def merge(
     fields = adapted_a.adapter.get_fields()
     a_values = adapted_a.get_values()
     b_values = adapted_b.get_update_values()
-    changes = {
-        key: apply_reducers(
-            a_values[key],
-            value,
-            field_info=fields[key],
-            default_reducer=default_reducer,
-        )
-        for key, value in b_values.items()
-        if key in fields
-    }
+    changes = {}
+    for key, value in b_values.items():
+        if key not in fields:
+            continue
+        try:
+            changes[key] = apply_reducers(
+                a_values[key],
+                value,
+                field_info=fields[key],
+                default_reducer=default_reducer,
+            )
+        except Exception as e:
+            # Nested merges add one note per level, innermost first
+            e.add_note(f"while merging field {key!r}")
+            raise
 
     return adapted_a.copy(changes=changes)

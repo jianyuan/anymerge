@@ -8,6 +8,10 @@ T = typing.TypeVar("T")
 
 
 def maybe_adapt_value(value: typing.Any) -> WrappedValue[typing.Any]:
+    if isinstance(value, type):
+        msg = f"expected an instance, got the class {value.__qualname__}"
+        raise AnyMergeTypeError(msg)
+
     if isinstance(value, WrappedValue):
         return typing.cast("WrappedValue[typing.Any]", value)
 
@@ -15,5 +19,8 @@ def maybe_adapt_value(value: typing.Any) -> WrappedValue[typing.Any]:
         if adapter_cls.is_supported_type(value):
             return adapter_cls(value).wrap(value)
 
-    msg = f"Unsupported instance type: {value}"
+    msg = (
+        f"unsupported type {type(value).__qualname__}: "
+        "expected a dataclass, a Pydantic model, a wrapped TypedDict or a dict"
+    )
     raise AnyMergeTypeError(msg)
