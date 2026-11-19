@@ -1,7 +1,7 @@
 import typing
 
 from anymerge.adapters._utils import maybe_adapt_value
-from anymerge.models import DEFAULT_REDUCER, FieldInfo, ReducerInfo
+from anymerge.models import DEFAULT_REDUCER, FieldInfo, Overwrite, ReducerInfo
 
 T = typing.TypeVar("T")
 
@@ -13,6 +13,9 @@ def apply_reducers(
     field_info: FieldInfo,
     default_reducer: ReducerInfo = DEFAULT_REDUCER,
 ) -> typing.Any:
+    if isinstance(b, Overwrite):
+        return b.value
+
     if field_info.reducers is None:
         return default_reducer(a, b)
 

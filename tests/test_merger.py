@@ -8,6 +8,7 @@ import pytest
 import anymerge._merger as sut
 from anymerge._api import Reducer
 from anymerge.adapters.typeddict_adapter import TypedDictAdapter
+from anymerge.models import Overwrite
 
 # Dataclasses
 
@@ -204,3 +205,28 @@ class PydanticModel7(pydantic.BaseModel):
 def test_merge_ignores_unset_pydantic_fields():
     result = sut.merge(PydanticModel7(a=5, b="kept"), PydanticModel7(a=1))
     assert result == PydanticModel7(a=6, b="kept")
+
+
+@pytest.mark.parametrize(
+    ("a", "b", "expected"),
+    [
+        pytest.param(
+            DataclassModel4(a=1), {"a": Overwrite(0)}, DataclassModel4(a=0), id="dataclass"
+        ),
+        pytest.param(PydanticModel4(a=1), {"a": Overwrite(0)}, PydanticModel4(a=0), id="pydantic"),
+        pytest.param(
+            PydanticModel6(a=PydanticModel4(a=1)),
+            {"a": Overwrite(PydanticModel4(a=0))},
+            PydanticModel6(a=PydanticModel4(a=0)),
+            id="deep",
+        ),
+        pytest.param(
+            PydanticModel6(a=PydanticModel4(a=1)),
+            {"a": {"a": Overwrite(0)}},
+            PydanticModel6(a=PydanticModel4(a=0)),
+            id="nested",
+        ),
+    ],
+)
+def test_merge_with_overwrite(a: typing.Any, b: typing.Any, expected: typing.Any):
+    assert sut.merge(a, b) == expected
