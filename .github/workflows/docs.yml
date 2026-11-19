@@ -27,13 +27,13 @@ jobs:
 
       - uses: actions/cache@v6
         with:
-          key: "mkdocs-material-${{ env.cache_id }}"
+          key: "zensical-${{ env.cache_id }}"
           path: .cache
           restore-keys: |
-            mkdocs-material-
+            zensical-
 
       - name: Build docs
-        run: uv run --group docs mkdocs build --clean --strict
+        run: uv run --group docs zensical build --strict
 
       - uses: actions/upload-pages-artifact@v4
         with:
