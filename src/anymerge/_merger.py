@@ -1,6 +1,7 @@
 import typing
 
 from anymerge.adapters._utils import maybe_adapt_value
+from anymerge.exceptions import AnyMergeValueError
 from anymerge.models import DEFAULT_REDUCER, FieldInfo, Overwrite, ReducerInfo
 
 T = typing.TypeVar("T")
@@ -49,24 +50,36 @@ def merge(
     fields = adapted_a.adapter.get_fields()
     a_values = adapted_a.get_values()
     b_values = adapted_b.get_update_values()
+    names = {alias: name for name, field in fields.items() for alias in field.aliases}
+    allows_extra_fields = adapted_a.adapter.allows_extra_fields()
     changes = {}
+    seen_keys: dict[typing.Any, typing.Any] = {}
     for key, value in b_values.items():
-        if key not in fields:
+        name = names.get(key, key)
+        if name in fields:
+            field_info = fields[name]
+        elif allows_extra_fields:
+            field_info = FieldInfo(name=name, base_type=typing.Any, reducers=None)
+        else:
             continue
-        if key not in a_values:
+        if name in seen_keys:
+            msg = f"the update sets field {name!r} twice, as {seen_keys[name]!r} and {key!r}"
+            raise AnyMergeValueError(msg)
+        seen_keys[name] = key
+        if name not in a_values:
             # Nothing to reduce with, e.g. a NotRequired key missing from a TypedDict base
-            changes[key] = value.value if isinstance(value, Overwrite) else value
+            changes[name] = value.value if isinstance(value, Overwrite) else value
             continue
         try:
-            changes[key] = apply_reducers(
-                a_values[key],
+            changes[name] = apply_reducers(
+                a_values[name],
                 value,
-                field_info=fields[key],
+                field_info=field_info,
                 default_reducer=default_reducer,
             )
         except Exception as e:
             # Nested merges add one note per level, innermost first
-            e.add_note(f"while merging field {key!r}")
+            e.add_note(f"while merging field {name!r}")
             raise
 
     return adapted_a.copy(changes=changes)
