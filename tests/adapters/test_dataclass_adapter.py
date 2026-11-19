@@ -4,8 +4,9 @@ import typing
 import pytest
 
 import anymerge.adapters.dataclass_adapter as sut
+from anymerge.exceptions import AnyMergeTypeError
 from anymerge.models import FieldInfo, ReducerInfo
-from tests.adapters import fixtures
+from tests.adapters import fixtures, future_annotations_fixtures
 
 
 @pytest.mark.parametrize(
@@ -136,3 +137,18 @@ def test_dataclass_adapter_copy():
     assert copy == fixtures.DataclassModel2(a=2)
     assert copy is not value
     assert copy is not changes
+
+
+@pytest.mark.parametrize(
+    "model",
+    [future_annotations_fixtures.DataclassModel, future_annotations_fixtures.DataclassModel(a=1)],
+)
+def test_dataclass_adapter_get_fields_string_annotations(model: typing.Any):
+    assert sut.DataclassAdapter(model).get_fields() == {
+        "a": FieldInfo(name="a", base_type=int, reducers=[ReducerInfo(operator.add)]),
+    }
+
+
+def test_dataclass_adapter_get_fields_unresolvable_annotation():
+    with pytest.raises(AnyMergeTypeError, match="cannot resolve the type annotations"):
+        sut.DataclassAdapter(future_annotations_fixtures.UnresolvableDataclassModel).get_fields()

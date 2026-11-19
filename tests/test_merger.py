@@ -9,6 +9,7 @@ import anymerge._merger as sut
 from anymerge._api import Reducer
 from anymerge.adapters.typeddict_adapter import TypedDictAdapter
 from anymerge.models import Overwrite
+from tests.adapters import future_annotations_fixtures
 
 # Dataclasses
 
@@ -245,3 +246,22 @@ class SlotsDataclassModel:
 
 def test_merge_slots_dataclass():
     assert sut.merge(SlotsDataclassModel(a=1), {"a": 2}) == SlotsDataclassModel(a=3)
+
+
+@pytest.mark.parametrize(
+    ("a", "expected"),
+    [
+        pytest.param(
+            future_annotations_fixtures.DataclassModel(a=1),
+            future_annotations_fixtures.DataclassModel(a=3),
+            id="dataclass",
+        ),
+        pytest.param(
+            future_annotations_fixtures.InheritedDataclassModel(a=1),
+            future_annotations_fixtures.InheritedDataclassModel(a=3),
+            id="inherited",
+        ),
+    ],
+)
+def test_merge_string_annotations(a: typing.Any, expected: typing.Any):
+    assert sut.merge(a, {"a": 2}) == expected
