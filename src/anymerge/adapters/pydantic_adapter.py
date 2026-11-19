@@ -33,9 +33,20 @@ class PydanticAdapter(BaseAdapter[T], typing.Generic[T]):
                 reducers=(
                     [data for data in field.metadata if isinstance(data, ReducerInfo)] or None
                 ),
+                # AliasChoices and AliasPath validation aliases aren't supported
+                aliases=tuple(
+                    dict.fromkeys(
+                        alias
+                        for alias in (field.alias, field.validation_alias)
+                        if isinstance(alias, str) and alias != field_name
+                    )
+                ),
             )
             for field_name, field in self.model.__pydantic_fields__.items()
         }
+
+    def allows_extra_fields(self) -> bool:
+        return self.model.model_config.get("extra") == "allow"
 
     def get_values(self, value: T) -> dict[typing.Any, typing.Any]:
         return dict(value)

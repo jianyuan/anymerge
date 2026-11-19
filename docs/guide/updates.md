@@ -1,6 +1,6 @@
 # Updates
 
-The second argument to `merge` is the update. It can be a dict or any [supported model](models.md), and anymerge merges each of its fields that the base also has. Keys the base doesn't have are ignored.
+The second argument to `merge` is the update. It can be a dict or any [supported model](models.md), and anymerge merges each of its fields that the base also has. Keys the base doesn't have are ignored, except on Pydantic models that allow [extra fields](#aliases-and-extra-fields).
 
 ## Partial updates
 
@@ -47,6 +47,41 @@ print(merge(state, State(total=1)))
 To reset a field to its default, set it explicitly, as in `State(name="default")`.
 
 Dataclasses don't record which fields were set, so a dataclass update merges every field, defaults included. Use a dict to update only some fields of a dataclass.
+
+## Aliases and extra fields
+
+A dict update can use a Pydantic field's name, its `alias` or a string `validation_alias`, so a request body that arrives under its aliases merges as expected. Using both the name and an alias for the same field in one update raises `AnyMergeValueError`:
+
+```python
+from anymerge import merge
+from pydantic import BaseModel, Field
+
+class User(BaseModel):
+    full_name: str = Field(alias="fullName")
+    email: str = ""
+
+
+user = User(fullName="Ada")
+
+print(merge(user, {"fullName": "Ada Lovelace"}))
+#> full_name='Ada Lovelace' email=''
+```
+
+Keys the model doesn't declare are ignored, unless the model is configured with `extra="allow"`. Then they are merged with the default reducer, which replaces them unless you pass a different `default_reducer`:
+
+```python
+from anymerge import merge
+from pydantic import BaseModel, ConfigDict
+
+class Event(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: str
+
+
+print(merge(Event(name="signup", source="web"), {"source": "app", "campaign": "spring"}))
+#> name='signup' source='app' campaign='spring'
+```
 
 ## Overwriting a field
 

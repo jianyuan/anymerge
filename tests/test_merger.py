@@ -8,7 +8,7 @@ import pytest
 import anymerge._merger as sut
 from anymerge._api import Reducer
 from anymerge.adapters.typeddict_adapter import TypedDictAdapter
-from anymerge.exceptions import AnyMergeTypeError
+from anymerge.exceptions import AnyMergeTypeError, AnyMergeValueError
 from anymerge.models import Overwrite
 from tests.adapters import future_annotations_fixtures
 
@@ -324,3 +324,66 @@ class NotRequiredTypedDictModel(typing.TypedDict):
 def test_merge_into_missing_not_required_key(value: typing.Any):
     base = TypedDictAdapter(NotRequiredTypedDictModel).wrap(NotRequiredTypedDictModel())
     assert sut.merge(base, {"a": value}) == {"a": [1]}
+
+
+class AliasedPydanticModel(pydantic.BaseModel):
+    """Pydantic model with aliased fields"""
+
+    full_name: str = pydantic.Field("", alias="fullName")
+    nick_name: str = pydantic.Field("", validation_alias="nickName")
+    total: typing.Annotated[int, Reducer(operator.add)] = pydantic.Field(0, alias="Total")
+
+
+@pytest.mark.parametrize(
+    ("b", "expected"),
+    [
+        pytest.param({"fullName": "x"}, {"full_name": "x"}, id="alias"),
+        pytest.param({"full_name": "x"}, {"full_name": "x"}, id="name"),
+        pytest.param({"nickName": "x"}, {"nick_name": "x"}, id="validation-alias"),
+        pytest.param({"Total": 2}, {"total": 3}, id="alias-with-reducer"),
+    ],
+)
+def test_merge_aliases(b: typing.Any, expected: dict[str, typing.Any]):
+    result = sut.merge(AliasedPydanticModel(Total=1), b)
+    assert result.model_dump(include=set(expected)) == expected
+
+
+def test_merge_alias_and_name_conflict():
+    with pytest.raises(AnyMergeValueError, match="sets field 'full_name' twice"):
+        sut.merge(AliasedPydanticModel(), {"full_name": "x", "fullName": "y"})
+
+
+class ExtraAllowPydanticModel(pydantic.BaseModel):
+    """Pydantic model that allows extra fields"""
+
+    model_config = pydantic.ConfigDict(extra="allow")
+
+    a: int = 0
+
+
+class ExtraIgnorePydanticModel(pydantic.BaseModel):
+    """Pydantic model that ignores extra fields"""
+
+    a: int = 0
+
+
+@pytest.mark.parametrize(
+    ("b", "expected"),
+    [
+        pytest.param({"x": 2, "y": 3}, {"a": 0, "x": 2, "y": 3}, id="dict"),
+        pytest.param(ExtraAllowPydanticModel(x=2, y=3), {"a": 0, "x": 2, "y": 3}, id="model"),
+    ],
+)
+def test_merge_extra_allow(b: typing.Any, expected: dict[str, typing.Any]):
+    assert sut.merge(ExtraAllowPydanticModel(x=1), b).model_dump() == expected
+
+
+def test_merge_extra_allow_default_reducer():
+    result = sut.merge(
+        ExtraAllowPydanticModel(x=1), {"x": 2}, default_reducer=Reducer(operator.add)
+    )
+    assert result.model_dump() == {"a": 0, "x": 3}
+
+
+def test_merge_extra_ignore():
+    assert sut.merge(ExtraIgnorePydanticModel(), {"x": 2}).model_dump() == {"a": 0}

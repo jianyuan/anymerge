@@ -60,6 +60,14 @@ class BaseAdapter(abc.ABC, typing.Generic[T]):
         """
         return self.get_values(value)
 
+    def allows_extra_fields(self) -> bool:
+        """Whether the model accepts fields it doesn't declare.
+
+        Returns:
+            Whether undeclared keys in an update should be merged instead of ignored.
+        """
+        return False
+
     @abc.abstractmethod
     def copy(self, value: T, *, changes: dict[typing.Any, typing.Any]) -> T:
         """Copy the instance with the changes applied.

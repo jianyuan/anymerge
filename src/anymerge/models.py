@@ -58,3 +58,6 @@ class FieldInfo:
 
     reducers: list[ReducerInfo] | None
     """A list of information about reducers to apply to the field."""
+
+    aliases: tuple[str, ...] = ()
+    """Other keys an update can use for the field."""

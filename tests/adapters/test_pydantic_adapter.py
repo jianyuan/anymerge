@@ -1,6 +1,7 @@
 import operator
 import typing
 
+import pydantic
 import pytest
 
 import anymerge.adapters.pydantic_adapter as sut
@@ -158,3 +159,29 @@ def test_pydantic_adapter_copy(
     assert copy == expected
     assert copy is not value
     assert copy is not changes
+
+
+def test_pydantic_adapter_get_fields_aliases():
+    class Model(pydantic.BaseModel):
+        a: int = pydantic.Field(0, alias="A")
+        b: int = pydantic.Field(0, validation_alias="B", serialization_alias="bee")
+        c: int = pydantic.Field(0, alias="C", validation_alias=pydantic.AliasChoices("c1", "c2"))
+        d: int = 0
+
+    fields = sut.PydanticAdapter(Model).get_fields()
+    assert {name: field.aliases for name, field in fields.items()} == {
+        "a": ("A",),
+        "b": ("B",),
+        "c": ("C",),
+        "d": (),
+    }
+
+
+@pytest.mark.parametrize(
+    ("extra", "expected"), [("allow", True), ("ignore", False), ("forbid", False)]
+)
+def test_pydantic_adapter_allows_extra_fields(extra: typing.Any, expected: bool):
+    class Model(pydantic.BaseModel):
+        model_config = pydantic.ConfigDict(extra=extra)
+
+    assert sut.PydanticAdapter(Model).allows_extra_fields() is expected
