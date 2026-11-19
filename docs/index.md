@@ -49,6 +49,7 @@ anymerge needs Python 3.11 or later. Dataclasses and TypedDicts work without any
 - [Reducers](guide/reducers.md) explains how fields combine, including custom reducers and deep merging.
 - [Updates](guide/updates.md) covers partial updates, `Overwrite` and applying many updates with `reduce`.
 - [Lists of records](guide/lists.md) shows how to update, append and remove items by key.
+- [AI applications](ai/index.md) has recipes for agent state, streamed responses, retrieval, structured extraction, model settings and eval results.
 - The API reference documents every public function and class.
 
 ## License
