@@ -12,6 +12,10 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # PyPI trusted publishing
+      id-token: write
     steps:
       - uses: actions/checkout@v7
 
@@ -27,6 +31,3 @@ jobs:
 
       - name: Publish package
         run: uv publish
-        env:
-          UV_PUBLISH_USERNAME: ${{ secrets.HATCH_INDEX_USER }}
-          UV_PUBLISH_PASSWORD: ${{ secrets.HATCH_INDEX_AUTH }}
