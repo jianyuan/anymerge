@@ -192,3 +192,15 @@ def test_merge_mixed(a: typing.Any, b: typing.Any, expected: typing.Any):
 def test_merge_with_dict(a: typing.Any, expected: typing.Any):
     result = sut.merge(a, {"a": 1})
     assert result == expected
+
+
+class PydanticModel7(pydantic.BaseModel):
+    """Pydantic model with a reducer field and a field with a default"""
+
+    a: typing.Annotated[int, Reducer(operator.add)] = 0
+    b: str = "default"
+
+
+def test_merge_ignores_unset_pydantic_fields():
+    result = sut.merge(PydanticModel7(a=5, b="kept"), PydanticModel7(a=1))
+    assert result == PydanticModel7(a=6, b="kept")

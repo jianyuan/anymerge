@@ -38,7 +38,8 @@ class PydanticAdapter(BaseAdapter[T], typing.Generic[T]):
         }
 
     def get_values(self, value: T) -> dict[typing.Any, typing.Any]:
-        return dict(value)
+        # Only explicitly set fields, so unset defaults don't overwrite existing values
+        return {key: item for key, item in value if key in value.model_fields_set}
 
     def copy(self, value: T, *, changes: dict[typing.Any, typing.Any]) -> T:
         return value.model_copy(update=changes)
