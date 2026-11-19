@@ -82,6 +82,34 @@ print(merge(state, {"items": Overwrite([])}))
 #> items=[]
 ```
 
+### Merging lists by key
+
+`merge_by_key` merges two lists by matching a key on each item. An item with a matching key replaces the existing one in place, an item with a new key is appended, and `Remove(key)` deletes the item with that key:
+
+```python
+from typing import Annotated
+
+from anymerge import Reducer, Remove, merge
+from anymerge.reducers import merge_by_key
+from pydantic import BaseModel
+
+class Todo(BaseModel):
+    id: int
+    done: bool = False
+
+
+class State(BaseModel):
+    todos: Annotated[list[Todo], Reducer(merge_by_key("id"))] = []
+
+
+state = State(todos=[Todo(id=1), Todo(id=2)])
+
+print(merge(state, {"todos": [Todo(id=1, done=True), Remove(2), Todo(id=3)]}))
+#> todos=[Todo(id=1, done=True), Todo(id=3, done=False)]
+```
+
+The key can be a field name or a function that takes an item and returns its key. Like `Overwrite`, `Remove` goes in a dict update.
+
 ## Installation
 
 ```console
