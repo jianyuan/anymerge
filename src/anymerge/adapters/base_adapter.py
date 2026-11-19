@@ -47,6 +47,19 @@ class BaseAdapter(abc.ABC, typing.Generic[T]):
             The values of the instance.
         """
 
+    def get_update_values(self, value: T) -> dict[typing.Any, typing.Any]:
+        """Get the values of the instance to merge into another instance.
+
+        Defaults to all the values. Override to leave out fields that should not be merged.
+
+        Args:
+            value: The instance to get the values from.
+
+        Returns:
+            The values to merge.
+        """
+        return self.get_values(value)
+
     @abc.abstractmethod
     def copy(self, value: T, *, changes: dict[typing.Any, typing.Any]) -> T:
         """Copy the instance with the changes applied.
@@ -103,6 +116,9 @@ class WrappedValue(typing.Generic[T]):
 
     def get_values(self) -> dict[typing.Any, typing.Any]:
         return self.adapter.get_values(self.value)
+
+    def get_update_values(self) -> dict[typing.Any, typing.Any]:
+        return self.adapter.get_update_values(self.value)
 
     def copy(self, *, changes: dict[typing.Any, typing.Any]) -> T:
         return self.adapter.copy(self.value, changes=changes)

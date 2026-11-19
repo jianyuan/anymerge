@@ -230,3 +230,7 @@ def test_merge_ignores_unset_pydantic_fields():
 )
 def test_merge_with_overwrite(a: typing.Any, b: typing.Any, expected: typing.Any):
     assert sut.merge(a, b) == expected
+
+
+def test_merge_into_model_with_unset_fields():
+    assert sut.merge(PydanticModel7(), {"a": 1}) == PydanticModel7(a=1)

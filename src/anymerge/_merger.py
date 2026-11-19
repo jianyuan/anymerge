@@ -48,7 +48,7 @@ def merge(
     adapted_b = maybe_adapt_value(b)
     fields = adapted_a.adapter.get_fields()
     a_values = adapted_a.get_values()
-    b_values = adapted_b.get_values()
+    b_values = adapted_b.get_update_values()
     changes = {
         key: apply_reducers(
             a_values[key],
