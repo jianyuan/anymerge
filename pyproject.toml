@@ -82,4 +82,4 @@ fixture-parentheses = false
 mark-parentheses = false
 
 [tool.mypy]
-plugins = ["pydantic.mypy", "pydantic.v1.mypy"]
+plugins = ["pydantic.mypy"]

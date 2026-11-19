@@ -3,7 +3,6 @@ import operator
 import typing
 
 import pydantic
-import pydantic.v1
 import pytest
 
 import anymerge._merger as sut
@@ -127,43 +126,6 @@ class PydanticModel6(pydantic.BaseModel):
     a: typing.Annotated[PydanticModel4, Reducer(deep=True)]
 
 
-# Pydantic V1 models
-
-
-class PydanticV1Model1(pydantic.v1.BaseModel):
-    """Bare Pydantic V1 model"""
-
-
-class PydanticV1Model2(PydanticV1Model1):
-    """Pydantic V1 model with one field"""
-
-    a: int
-
-
-class PydanticV1Model3(PydanticV1Model2):
-    """Pydantic V1 model with two fields, one inherited"""
-
-    b: str
-
-
-class PydanticV1Model4(PydanticV1Model2):
-    """Pydantic V1 model with one overridden field"""
-
-    a: typing.Annotated[int, Reducer(operator.add)]
-
-
-class PydanticV1Model5(pydantic.v1.BaseModel):
-    """Pydantic V1 model with one field with deep reducer"""
-
-    a: typing.Annotated[PydanticV1Model4, Reducer(...)]
-
-
-class PydanticV1Model6(pydantic.v1.BaseModel):
-    """Pydantic V1 model with one field with deep reducer"""
-
-    a: typing.Annotated[PydanticV1Model4, Reducer(deep=True)]
-
-
 @pytest.mark.parametrize(
     ("a", "b", "expected"),
     [
@@ -183,18 +145,6 @@ class PydanticV1Model6(pydantic.v1.BaseModel):
             PydanticModel6(a=PydanticModel4(a=1)),
             PydanticModel6(a=PydanticModel4(a=2)),
         ),
-        (PydanticV1Model2(a=1), PydanticV1Model2(a=2), PydanticV1Model2(a=2)),
-        (
-            PydanticV1Model3(a=1, b="a"),
-            PydanticV1Model3(a=2, b="b"),
-            PydanticV1Model3(a=2, b="b"),
-        ),
-        (PydanticV1Model4(a=1), PydanticV1Model4(a=1), PydanticV1Model4(a=2)),
-        (
-            PydanticV1Model6(a=PydanticV1Model4(a=1)),
-            PydanticV1Model6(a=PydanticV1Model4(a=1)),
-            PydanticV1Model6(a=PydanticV1Model4(a=2)),
-        ),
     ],
 )
 def test_merge(a: typing.Any, b: typing.Any, expected: typing.Any):
@@ -212,7 +162,6 @@ def test_merge(a: typing.Any, b: typing.Any, expected: typing.Any):
             id="typeddict",
         ),
         pytest.param(PydanticModel4(a=1), PydanticModel4(a=2), id="pydantic"),
-        pytest.param(PydanticV1Model4(a=1), PydanticV1Model4(a=2), id="pydantic_v1"),
     ],
 )
 @pytest.mark.parametrize(
@@ -221,7 +170,6 @@ def test_merge(a: typing.Any, b: typing.Any, expected: typing.Any):
         pytest.param(DataclassModel4(a=1), id="dataclass"),
         pytest.param(TypedDictAdapter(TypedDictModel4).wrap(TypedDictModel4(a=1)), id="typeddict"),
         pytest.param(PydanticModel4(a=1), id="pydantic"),
-        pytest.param(PydanticV1Model4(a=1), id="pydantic_v1"),
     ],
 )
 def test_merge_mixed(a: typing.Any, b: typing.Any, expected: typing.Any):
@@ -239,7 +187,6 @@ def test_merge_mixed(a: typing.Any, b: typing.Any, expected: typing.Any):
             id="typeddict",
         ),
         pytest.param(PydanticModel4(a=1), PydanticModel4(a=2), id="pydantic"),
-        pytest.param(PydanticV1Model4(a=1), PydanticV1Model4(a=2), id="pydantic_v1"),
     ],
 )
 def test_merge_with_dict(a: typing.Any, expected: typing.Any):
