@@ -116,8 +116,7 @@ def test_pydantic_adapter_get_fields(value: typing.Any, expected: dict[typing.An
                 "a": fixtures.PydanticModel4(a=1),
             },
         ),
-        (fixtures.PydanticModel7, fixtures.PydanticModel7(a=1), {"a": 1}),
-        (fixtures.PydanticModel7, fixtures.PydanticModel7(a=1, b="b"), {"a": 1, "b": "b"}),
+        (fixtures.PydanticModel7, fixtures.PydanticModel7(a=1), {"a": 1, "b": "b"}),
     ],
 )
 def test_pydantic_adapter_get_values(
@@ -126,6 +125,19 @@ def test_pydantic_adapter_get_values(
     expected: dict[typing.Any, typing.Any],
 ):
     assert sut.PydanticAdapter(model).get_values(value) == expected
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (fixtures.PydanticModel7(a=1), {"a": 1}),
+        (fixtures.PydanticModel7(a=1, b="b"), {"a": 1, "b": "b"}),
+    ],
+)
+def test_pydantic_adapter_get_update_values(
+    value: typing.Any, expected: dict[typing.Any, typing.Any]
+):
+    assert sut.PydanticAdapter(fixtures.PydanticModel7).get_update_values(value) == expected
 
 
 @pytest.mark.parametrize(
