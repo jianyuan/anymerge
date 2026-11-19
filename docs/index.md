@@ -25,13 +25,39 @@ new_state = State(
     total=1,
 )
 
-final = merge(original, new_state)
+final = merge(original_state, new_state)
 print(final)
-#> State(replace='replace', total=1)
+#> replace='replace' total=1
 ```
 
 1. By default, the field value is replaced with the value from the new state.
 2. By annotating the field with a `Reducer`, you can specify a custom reducer function for the field. In this example, the `total` field uses the `operator.add` function as its reducer. This means that when merging, the values of the `total` field from both states will be added together instead of the default behavior of replacing the value.
+
+### Partial updates
+
+Only the fields in the update are merged. For a Pydantic model, that means the fields set explicitly when it was created, so unset defaults never overwrite existing values. A plain dict works too:
+
+```python
+import operator
+from typing import Annotated
+
+from anymerge import Reducer, merge
+from pydantic import BaseModel
+
+class State(BaseModel):
+    name: str = "default"
+    total: Annotated[int, Reducer(operator.add)] = 0
+
+
+state = State(name="kept", total=5)
+
+print(merge(state, State(total=1)))
+#> name='kept' total=6
+print(merge(state, {"total": 1}))
+#> name='kept' total=6
+```
+
+To reset a field to its default, set it explicitly: `State(name="default")`.
 
 ## Installation
 
