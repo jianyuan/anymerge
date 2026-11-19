@@ -1,14 +1,16 @@
 [project]
 name = "anymerge"
 version = "0.0.1a0"
-description = "A Python library for merging dataclasses, TypedDicts, and Pydantic models seamlessly."
+description = "Merge dataclasses, TypedDicts and Pydantic models field by field, with reducers declared in type annotations."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
-keywords = []
+keywords = ["dataclasses", "deep-merge", "merge", "patch", "pydantic", "reducer", "typeddict"]
 authors = [{ name = "Jian Yuan Lee", email = "jianyuan@gmail.com" }]
 classifiers = [
   "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -16,7 +18,7 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: 3.15",
   "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Software Development :: Libraries :: Python Modules",
   "Typing :: Typed",
 ]
 dependencies = ["typing-extensions>=4.10.0"]
@@ -25,7 +27,9 @@ dependencies = ["typing-extensions>=4.10.0"]
 pydantic = ["pydantic>=2"]
 
 [project.urls]
-Documentation = "https://github.com/jianyuan/anymerge#readme"
+Homepage = "https://anymerge.jian.fyi"
+Documentation = "https://anymerge.jian.fyi"
+Changelog = "https://github.com/jianyuan/anymerge/releases"
 Issues = "https://github.com/jianyuan/anymerge/issues"
 Source = "https://github.com/jianyuan/anymerge"
 
