@@ -1,8 +1,6 @@
 # anymerge
 
-Anymerge is a library for merging dataclasses, TypedDicts, and Pydantic models seamlessly with custom reducers.
-
-## Examples
+anymerge merges dataclasses, TypedDicts and Pydantic models field by field. Each field decides how its old and new values combine, using a reducer declared in the field's type annotation.
 
 ```python
 import operator
@@ -12,134 +10,23 @@ from anymerge import Reducer, merge
 from pydantic import BaseModel
 
 class State(BaseModel):
-    replace: str # (1)!
-    total: Annotated[int, Reducer(operator.add)] # (2)!
+    status: str  # (1)!
+    total: Annotated[int, Reducer(operator.add)]  # (2)!
+    log: Annotated[list[str], Reducer(operator.add)] = []
 
 
-original_state = State(
-    replace="original",
-    total=0,
-)
-new_state = State(
-    replace="replace",
-    total=1,
-)
+state = State(status="pending", total=0)
+state = merge(state, {"status": "running", "total": 3, "log": ["started"]})
+state = merge(state, {"total": 2, "log": ["finished"]})
 
-final = merge(original_state, new_state)
-print(final)
-#> replace='replace' total=1
+print(state)
+#> status='running' total=5 log=['started', 'finished']
 ```
 
-1. By default, the field value is replaced with the value from the new state.
-2. By annotating the field with a `Reducer`, you can specify a custom reducer function for the field. In this example, the `total` field uses the `operator.add` function as its reducer. This means that when merging, the values of the `total` field from both states will be added together instead of the default behavior of replacing the value.
+1. A field without a reducer takes the new value.
+2. `Reducer(operator.add)` adds the new value to the old one.
 
-### Partial updates
-
-Only the fields in the update are merged. For a Pydantic model, that means the fields set explicitly when it was created, so unset defaults never overwrite existing values. A plain dict works too:
-
-```python
-import operator
-from typing import Annotated
-
-from anymerge import Reducer, merge
-from pydantic import BaseModel
-
-class State(BaseModel):
-    name: str = "default"
-    total: Annotated[int, Reducer(operator.add)] = 0
-
-
-state = State(name="kept", total=5)
-
-print(merge(state, State(total=1)))
-#> name='kept' total=6
-print(merge(state, {"total": 1}))
-#> name='kept' total=6
-```
-
-To reset a field to its default, set it explicitly: `State(name="default")`.
-
-### Overwriting a field
-
-To replace a field's value without running its reducer, wrap the new value in `Overwrite`. Pass it in a dict update, because Pydantic models reject an `Overwrite` value when they validate:
-
-```python
-import operator
-from typing import Annotated
-
-from anymerge import Overwrite, Reducer, merge
-from pydantic import BaseModel
-
-class State(BaseModel):
-    items: Annotated[list[int], Reducer(operator.add)] = []
-
-
-state = State(items=[1, 2])
-
-print(merge(state, {"items": [3]}))
-#> items=[1, 2, 3]
-print(merge(state, {"items": Overwrite([])}))
-#> items=[]
-```
-
-### Common reducers
-
-Any function that takes the current value and the new value works as a reducer, so the standard library covers most cases:
-
-| Reducer | Use it for | Result |
-| --- | --- | --- |
-| `operator.add` | Appending to lists, summing numbers, joining strings | `[1] + [2]` → `[1, 2]` |
-| `operator.or_` | Set union, shallow dict update | `or_({"x": 1, "y": 1}, {"y": 2})` → `{"x": 1, "y": 2}` |
-| `max`, `min` | Keeping the highest or lowest value | `max(3, 5)` → `5` |
-| `merge_by_key` | Updating a list of records by ID | See below |
-
-```python
-import operator
-from typing import Annotated
-
-from anymerge import Reducer, merge
-from pydantic import BaseModel
-
-class State(BaseModel):
-    tags: Annotated[set[str], Reducer(operator.or_)] = set()
-    meta: Annotated[dict[str, int], Reducer(operator.or_)] = {}
-    high_score: Annotated[int, Reducer(max)] = 0
-
-
-state = State(tags={"a"}, meta={"x": 1, "y": 1}, high_score=5)
-
-result = merge(state, {"tags": {"b"}, "meta": {"y": 2}, "high_score": 3})
-print(sorted(result.tags), result.meta, result.high_score)
-#> ['a', 'b'] {'x': 1, 'y': 2} 5
-```
-
-### Merging lists by key
-
-`merge_by_key` merges two lists by matching a key on each item. An item with a matching key replaces the existing one in place, an item with a new key is appended, and `Remove(key)` deletes the item with that key:
-
-```python
-from typing import Annotated
-
-from anymerge import Reducer, Remove, merge
-from anymerge.reducers import merge_by_key
-from pydantic import BaseModel
-
-class Todo(BaseModel):
-    id: int
-    done: bool = False
-
-
-class State(BaseModel):
-    todos: Annotated[list[Todo], Reducer(merge_by_key("id"))] = []
-
-
-state = State(todos=[Todo(id=1), Todo(id=2)])
-
-print(merge(state, {"todos": [Todo(id=1, done=True), Remove(2), Todo(id=3)]}))
-#> todos=[Todo(id=1, done=True), Todo(id=3, done=False)]
-```
-
-The key can be a field name or a function that takes an item and returns its key. Like `Overwrite`, `Remove` goes in a dict update.
+`merge` returns a new instance and doesn't modify either argument, as long as your reducers don't modify their inputs.
 
 ## Installation
 
@@ -147,6 +34,16 @@ The key can be a field name or a function that takes an item and returns its key
 $ pip install anymerge
 ```
 
+anymerge needs Python 3.11 or later and Pydantic 2.
+
+## Where to go next
+
+- [Supported models](guide/models.md) covers dataclasses, Pydantic models, TypedDicts and plain dicts.
+- [Reducers](guide/reducers.md) explains how fields combine, including custom reducers and deep merging.
+- [Updates](guide/updates.md) covers partial updates, `Overwrite` and applying many updates with `reduce`.
+- [Lists of records](guide/lists.md) shows how to update, append and remove items by key.
+- The API reference documents every public function and class.
+
 ## License
 
-`anymerge` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+anymerge is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

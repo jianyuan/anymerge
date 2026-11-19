@@ -2,7 +2,15 @@
 site_name = "anymerge"
 site_url = "https://anymerge.jian.fyi/"
 repo_url = "https://github.com/jianyuan/anymerge"
-nav = [{ anymerge = "index.md" }]
+nav = [
+  { anymerge = "index.md" },
+  { Guide = [
+    { "Supported models" = "guide/models.md" },
+    { Reducers = "guide/reducers.md" },
+    { Updates = "guide/updates.md" },
+    { "Lists of records" = "guide/lists.md" },
+  ] },
+]
 
 [project.theme]
 variant = "modern"
