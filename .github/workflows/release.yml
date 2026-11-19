@@ -12,17 +12,22 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # PyPI trusted publishing
+      id-token: write
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install hatch
-        uses: pypa/hatch@install
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Check tag matches version
+        if: github.ref_type == 'tag'
+        run: test "$(uv version --short)" = "${{ github.ref_name }}"
 
       - name: Build package
-        run: hatch build --clean
+        run: uv build
 
       - name: Publish package
-        run: hatch publish --no-prompt
-        env:
-          HATCH_INDEX_USER: ${{ secrets.HATCH_INDEX_USER }}
-          HATCH_INDEX_AUTH: ${{ secrets.HATCH_INDEX_AUTH }}
+        run: uv publish
