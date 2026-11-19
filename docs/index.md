@@ -59,6 +59,29 @@ print(merge(state, {"total": 1}))
 
 To reset a field to its default, set it explicitly: `State(name="default")`.
 
+### Overwriting a field
+
+To replace a field's value without running its reducer, wrap the new value in `Overwrite`. Pass it in a dict update, because Pydantic models reject an `Overwrite` value when they validate:
+
+```python
+import operator
+from typing import Annotated
+
+from anymerge import Overwrite, Reducer, merge
+from pydantic import BaseModel
+
+class State(BaseModel):
+    items: Annotated[list[int], Reducer(operator.add)] = []
+
+
+state = State(items=[1, 2])
+
+print(merge(state, {"items": [3]}))
+#> items=[1, 2, 3]
+print(merge(state, {"items": Overwrite([])}))
+#> items=[]
+```
+
 ## Installation
 
 ```console
