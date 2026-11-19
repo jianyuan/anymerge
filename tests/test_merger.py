@@ -234,3 +234,14 @@ def test_merge_with_overwrite(a: typing.Any, b: typing.Any, expected: typing.Any
 
 def test_merge_into_model_with_unset_fields():
     assert sut.merge(PydanticModel7(), {"a": 1}) == PydanticModel7(a=1)
+
+
+@dataclasses.dataclass(slots=True)
+class SlotsDataclassModel:
+    """Dataclass with slots"""
+
+    a: typing.Annotated[int, Reducer(operator.add)]
+
+
+def test_merge_slots_dataclass():
+    assert sut.merge(SlotsDataclassModel(a=1), {"a": 2}) == SlotsDataclassModel(a=3)
