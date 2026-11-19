@@ -19,7 +19,10 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
   "Typing :: Typed",
 ]
-dependencies = ["pydantic>=2", "typing-extensions>=4.10.0"]
+dependencies = ["typing-extensions>=4.10.0"]
+
+[project.optional-dependencies]
+pydantic = ["pydantic>=2"]
 
 [project.urls]
 Documentation = "https://github.com/jianyuan/anymerge#readme"
@@ -27,7 +30,7 @@ Issues = "https://github.com/jianyuan/anymerge/issues"
 Source = "https://github.com/jianyuan/anymerge"
 
 [dependency-groups]
-dev = ["mypy>=1.0.0", "pytest", "pytest-cov", "ruff"]
+dev = ["mypy>=1.0.0", "pydantic>=2", "pytest", "pytest-cov", "ruff"]
 docs = [
   "mkdocs-api-autonav",
   "mkdocs-autorefs",
