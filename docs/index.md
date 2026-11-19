@@ -44,7 +44,7 @@ anymerge needs Python 3.11 or later. Dataclasses and TypedDicts work without any
 
 ## Where to go next
 
-- [Supported models](guide/models.md) covers dataclasses, Pydantic models, TypedDicts and plain dicts.
+- [Choosing a model](models/index.md) compares dataclasses, Pydantic models and TypedDicts, and each has its own page: [dataclasses](models/dataclasses.md), [Pydantic models](models/pydantic.md) and [TypedDicts](models/typeddicts.md).
 - [Reducers](guide/reducers.md) explains how fields combine, including custom reducers and deep merging.
 - [Updates](guide/updates.md) covers partial updates, `Overwrite` and applying many updates with `reduce`.
 - [Lists of records](guide/lists.md) shows how to update, append and remove items by key.

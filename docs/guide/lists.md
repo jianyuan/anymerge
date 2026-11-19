@@ -28,7 +28,7 @@ print(merge(state, {"todos": [Todo(id=1, done=True), Remove(2), Todo(id=3)]}))
 #> todos=[Todo(id=1, done=True), Todo(id=3, done=False)]
 ```
 
-Like `Overwrite`, `Remove` goes in a dict update, because Pydantic models reject it when they validate the field.
+Like `Overwrite`, `Remove` goes in a dict update, because a Pydantic model [rejects it](../models/pydantic.md#markers-go-in-dict-updates) when it validates the field.
 
 ## Choosing the key
 

@@ -1,6 +1,6 @@
 # Updates
 
-The second argument to `merge` is the update. It can be a dict or any [supported model](models.md), and anymerge merges each of its fields that the base also has. Keys the base doesn't have are ignored, except on Pydantic models that allow [extra fields](#aliases-and-extra-fields).
+The second argument to `merge` is the update. anymerge merges each of its fields that the base also has, and ignores the rest unless the base is a Pydantic model that allows [extra fields](../models/pydantic.md#extra-fields). The examples on this page use Pydantic models, and everything here works the same for [dataclasses](../models/dataclasses.md) and [TypedDicts](../models/typeddicts.md).
 
 ## Partial updates
 
@@ -24,64 +24,11 @@ print(merge(state, {"total": 1}))
 #> name='kept' total=6
 ```
 
-A Pydantic model as the update works the same way. Only the fields set explicitly when it was created are merged, so unset defaults don't overwrite existing values:
+When the update is a model, which of its fields count depends on its type:
 
-```python
-import operator
-from typing import Annotated
-
-from anymerge import Reducer, merge
-from pydantic import BaseModel
-
-class State(BaseModel):
-    name: str = "default"
-    total: Annotated[int, Reducer(operator.add)] = 0
-
-
-state = State(name="kept", total=5)
-
-print(merge(state, State(total=1)))
-#> name='kept' total=6
-```
-
-To reset a field to its default, set it explicitly, as in `State(name="default")`.
-
-Dataclasses don't record which fields were set, so a dataclass update merges every field, defaults included. Use a dict to update only some fields of a dataclass.
-
-## Aliases and extra fields
-
-A dict update can use a Pydantic field's name, its `alias` or a string `validation_alias`, so a request body that arrives under its aliases merges as expected. Using both the name and an alias for the same field in one update raises `AnyMergeValueError`:
-
-```python
-from anymerge import merge
-from pydantic import BaseModel, Field
-
-class User(BaseModel):
-    full_name: str = Field(alias="fullName")
-    email: str = ""
-
-
-user = User(fullName="Ada")
-
-print(merge(user, {"fullName": "Ada Lovelace"}))
-#> full_name='Ada Lovelace' email=''
-```
-
-Keys the model doesn't declare are ignored, unless the model is configured with `extra="allow"`. Then they are merged with the default reducer, which replaces them unless you pass a different `default_reducer`:
-
-```python
-from anymerge import merge
-from pydantic import BaseModel, ConfigDict
-
-class Event(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    name: str
-
-
-print(merge(Event(name="signup", source="web"), {"source": "app", "campaign": "spring"}))
-#> name='signup' source='app' campaign='spring'
-```
+- A [Pydantic model](../models/pydantic.md#partial-updates) contributes only the fields that were set explicitly.
+- A [dataclass](../models/dataclasses.md#updates-merge-every-field) contributes every field, defaults included.
+- A [TypedDict](../models/typeddicts.md#updates) is a plain dict, so it contributes the keys it contains.
 
 ## Overwriting a field
 
@@ -106,7 +53,7 @@ print(merge(state, {"items": Overwrite([])}))
 #> items=[]
 ```
 
-Pass `Overwrite` in a dict update. Pydantic models reject it when they validate the field.
+Pass `Overwrite` in a dict update. A Pydantic model [rejects it](../models/pydantic.md#markers-go-in-dict-updates) when it validates the field.
 
 `Overwrite` also works inside a [deep merge](reducers.md#deep-merging), at any level:
 
